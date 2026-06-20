@@ -1,13 +1,9 @@
- @php
-    use App\Helpers\MyHelper;
-@endphp
-
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Law Firm Application</title>
+    <title>Globexa Capital Ltd</title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
@@ -308,7 +304,7 @@
             <!--begin::Brand Image-->
             <img
               src="{{ session('business_logo') ? asset('storage/' . session('business_logo')) : 'https://via.placeholder.com/50' }}"
-              alt="AdminLTE Logo"
+              alt="Globexa Capital Ltd Logo"
               class="brand-image opacity-75 shadow"
             />
  
@@ -553,8 +549,6 @@
       sales_chart.render();
     </script>
 
-
-  {!! MyHelper::get_toast_global() !!}
 
     <!--end::Script-->
   </body>

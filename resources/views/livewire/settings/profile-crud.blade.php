@@ -1,5 +1,32 @@
+@php
+    use App\Helpers\Toast;
+@endphp
+
+
 <div>
     <ul class="nav nav-tabs">
+
+        <li class="nav-item">
+            <a class="nav-link {{ $activeTab == 'global-settings' ? 'active' : '' }}" 
+            href="{{ route('global-settings.index', ['tab' => 'global-settings']) }}">
+            Global Settings
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {{ $activeTab == 'generation-commission' ? 'active' : '' }}" 
+            href="{{ route('generation-commission.index', ['tab' => 'generation-commission']) }}">
+            Generation Commission
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {{ $activeTab == 'deposite-commission' ? 'active' : '' }}" 
+            href="{{ route('deposite-commission.index', ['tab' => 'deposite-commission']) }}">
+            Deposite Commission
+            </a>
+        </li>
+
         <li class="nav-item">
             <a class="nav-link {{ $activeTab == 'bussiness' ? 'active' : '' }}" 
             href="{{ route('bussiness.index', ['tab' => 'bussiness']) }}">
@@ -45,7 +72,7 @@
                         <div class="mb-3">
                             <label>Address</label>
                             <input type="address" class="form-control" wire:model="address">
-                            @error('emaaddressil') <span class="text-danger">{{ $message }}</span> @enderror
+                            @error('address') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
 
                         <div class='row'>
@@ -104,6 +131,6 @@
         </div>
    </div>
 
-    {!! MyHelper::get_toast_dispatch() !!}
+    {!! Toast::get_toast_message() !!}
     
 </div>

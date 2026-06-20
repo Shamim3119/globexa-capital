@@ -1,3 +1,31 @@
+<?php
+/*
+echo  $value = base_convert('1000', 10, 36) . 'R';
+echo "<br>";
+echo  substr($value, -1);   // L or R
+echo "<br>";
+echo substr($value, 0, -1); // remove last char
+echo "<br>";
+echo  $id = base_convert(str_replace(['L','R'], '', $value), 36, 10);
+*/
+?>
+
+
+
+
+  @if(request()->has('ref'))
+      @php
+        $ref = request('ref');
+        $side = substr($ref, -1);
+        $id = base_convert(substr($ref, 0, -1), 36, 10);
+      @endphp
+      <!--
+          Referrer ID: {{ $id }}<br>
+    Side: {{ $side }}
+-->
+  @endif
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,9 +36,9 @@
   <meta name="description" content="">
   <meta name="keywords" content="">
 
- 
-  <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
+  <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
   <!-- Fonts -->
   <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
@@ -52,7 +80,7 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="#about">Get Started</a>
+      <a id="get-started-btn" class="btn-getstarted" href="#registration">Registration</a>
 
     </div>
   </header>
@@ -389,6 +417,44 @@
 
     </section><!-- /Contact Section -->
 
+
+    <!-- Registration Section -->
+    <section id="registration" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Registration</h2>
+        <p> </p>
+      </div><!-- End Section Title -->
+
+      <div id="registration-form" class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row">
+          <div class="col-lg-6 col-12 mx-auto">
+
+              <div id="registration-info" class=" info-wrap">
+ 
+                  <div class="mb-3">
+                    <label class="form-label">Provide your referance link</label>
+                    <input type="text" class="form-control col-12" placeholder="Reference Link" name="ref" id="ref" value="">
+                    <span style="display: none;" id="reference_link-error" class="text-danger">Reference link is required</span>
+                  </div>
+
+                  <div class="m-3 d-flex justify-content-center">
+                      <button id='btnSubmitLink' type="button" onclick="submitLink()" class="btn btn-primary">Submit Link</button>
+                  </div>
+         
+              </div>
+
+          </div>
+              
+        </div>
+
+      </div>
+          <br><br><br><br><br> 
+    </section><!-- /Registration Section -->
+
+
   </main>
 
   <footer id="footer" class="footer">
@@ -431,7 +497,7 @@
 
         <div class="col-lg-3 col-md-12">
           <h4>Follow Us</h4>
-          <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
+          <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita/?ref=rsL#registration valies</p>
           <div class="social-links d-flex">
             <a href=""><i class="bi bi-twitter-x"></i></a>
             <a href=""><i class="bi bi-facebook"></i></a>
@@ -475,75 +541,351 @@
   <!-- Main JS File -->
   <script src="{{ asset('assets/js/main.js') }}"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+
+    async function updateRegistration() {
+
+        event.preventDefault();
+
+        const otp = document.getElementById('otp').value.trim();
+
+        let isValid = true;
+
+        // Hide all errors
+        document.querySelectorAll('.text-danger').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        if (!otp) {
+            document.getElementById('otp-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (otp != document.getElementById('exist_otp').value.trim()) {
+            document.getElementById('otp-error').style.display = 'block';
+            isValid = false;
+        }
+
+
+        if (!isValid) {
+            return false;
+        } 
+
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        const referral_id = document.getElementById('referral_id').value.trim();
+        const referral_side = document.getElementById('referral_side').value.trim();
+        const level = document.getElementById('level').value.trim();
+
+        document.getElementById('submitOtp').innerHTML = "Waiting......";
+        document.getElementById('submitOtp').disabled = true;
+
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+
+            const response = await axios.post('/api/registration', {
+                name: name,
+                email: email,
+                phone: phone,
+                password: password,
+
+                level: level,
+                referral_id: referral_id,
+                referral_side: referral_side,
+            });
+
+            let cont = ""; 
+
+            document.getElementById('registration-info').innerHTML = response.data.message;
+
+            setTimeout(() => {
+                window.location.href = window.location.pathname;
+            }, 3000);
+
+
+        } catch (error) {
+
+            if (error.response && error.response.status === 422) {
+
+                let errors = error.response.data.errors;
+
+                Object.keys(errors).forEach(field => {
+
+                    let errorElement = document.getElementById(field + '-error');
+
+                    if (errorElement) {
+                        errorElement.textContent = errors[field][0];
+                        errorElement.style.display = 'block';
+                    }
+                });
+
+            } else {
+
+                alert(
+                    error.response?.data?.message ||
+                    'Something went wrong.'
+                );
+
+            }
+            document.getElementById('submitOtp').innerHTML = "Submit OTP";
+            document.getElementById('submitOtp').disabled = false;
+        }
+
+    }
+
+    async function submitRegister() {
+
+        event.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const confirmPassword = document.getElementById('confirm_password').value.trim();
+
+        const referral_id = document.getElementById('referral_id').value.trim();
+        const referral_side = document.getElementById('referral_side').value.trim();
+        const level = document.getElementById('level').value.trim();
+
+        let isValid = true;
+
+        // Hide all errors
+        document.querySelectorAll('.text-danger').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        if (!name) {
+            document.getElementById('name-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!email) {
+            document.getElementById('email-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!phone) {
+            document.getElementById('phone-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!password) {
+            document.getElementById('password-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (password !== confirmPassword) {
+            document.getElementById('confirm_password-error').textContent = 'Passwords do not match';
+            document.getElementById('confirm_password-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return false;
+        } 
+
+        document.getElementById('submitDetails').innerHTML = "Waiting......";
+        document.getElementById('submitDetails').disabled = true;
+ 
+ 
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+
+            const response = await axios.post('/api/register', {
+                name: name,
+                email: email,
+                phone: phone,
+                password: password,
+                password_confirmation: confirmPassword,
+
+                level: level,
+                referral_id: referral_id,
+                referral_side: referral_side,
+            });
+
+            let cont = ""; 
+
+            cont = cont + "<input type='hidden' name='referral_id' id='referral_id' value='" + response.data.referral_id + "'>";
+            cont = cont + "<input type='hidden' name='referral_side' id='referral_side' value='" + response.data.referral_side + "'>";
+            cont = cont + "<input type='hidden' name='level' id='level' value='" + response.data.level + "'>";
+            cont = cont + "<input type='hidden' name='name' id='name' value='" + response.data.name + "'>";
+            cont = cont + "<input type='hidden' name='email' id='email' value='" + response.data.email + "'>";
+            cont = cont + "<input type='hidden' name='phone' id='phone' value='" + response.data.phone + "'>";
+            cont = cont + "<input type='hidden' name='password' id='password' value='" + response.data.password + "'>";
+            cont = cont + "<input type='hidden' name='exist_otp' id='exist_otp' value='" + response.data.otp + "'>";
+
+
+            cont = cont + "<div class='mb-3'>";
+            cont = cont + "<div class='alert alert-success'>OTP sent successfully! Please check your email.</div>";
+            cont = cont + "<label class='form-label'>Provide your mail OTP</label>";
+            cont = cont + "<input type='text' class='form-control col-12' placeholder='OTP' name='otp' id='otp' value=''>";
+            cont = cont + "<span style='display: none;' id='otp-error' class='text-danger'>OTP is required</span>";
+            cont = cont + "</div>";
+
+            cont = cont + "<div class='m-3 d-flex justify-content-center'>";
+            cont = cont + "<button id='submitOtp' type='button' onclick='updateRegistration()' class='btn btn-primary'>Submit OTP</button>";
+            cont = cont + "</div>";
+ 
+            document.getElementById('registration-info').innerHTML = cont;
+
+          //  alert(document.getElementById('exist_otp').value.trim())
+ 
+
+
+
+        } catch (error) {
+
+            if (error.response && error.response.status === 422) {
+
+                let errors = error.response.data.errors;
+
+                Object.keys(errors).forEach(field => {
+
+                    let errorElement = document.getElementById(field + '-error');
+
+                    if (errorElement) {
+                        errorElement.textContent = errors[field][0];
+                        errorElement.style.display = 'block';
+                    }
+                });
+
+            } else {
+
+                alert(
+                    error.response?.data?.message ||
+                    'Something went wrong.'
+                );
+
+            }
+            document.getElementById('submitDetails').innerHTML = "Submit Details";
+            document.getElementById('submitDetails').disabled = false;
+        }
+     
+    }
+
+
+
+    async function submitLink() {
+ 
+        const ref = document.getElementById('ref').value.trim();
+ 
+        if (!ref) {
+            document.getElementById('reference_link-error').style.display = 'block';
+            return false;
+        }
+
+ 
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+
+            const response = await axios.post('/api/check-ref', {
+                ref: ref,
+            });
+
+            const info = response.data.ref.split("|");
+  
+            
+            let cont = ""; 
+
+ 
+
+            cont = cont + "<input type='hidden' name='referral_id' id='referral_id' value='" + info[0] + "'>";
+            cont = cont + "<input type='hidden' name='referral_side' id='referral_side' value='" + info[2] + "'>";
+            cont = cont + "<input type='hidden' name='level' id='level' value='" + info[1] + "'>";
+
+            cont = cont + " <div class='mb-3'>";
+            cont = cont + "<label class='form-label'>Name</label>";   
+            cont = cont + "<input type='text' class='form-control' placeholder='Name' name='name' id='name' value=''>";
+            cont = cont + "<span style='display: none;' id='name-error' class='text-danger'>Name is required</span>";
+            cont = cont + "</div>";
+
+            cont = cont + "<div class='mb-3'>";
+            cont = cont + "<label class='form-label'>Email</label>";
+            cont = cont + "<input type='email' class='form-control' placeholder='Email' name='email' id='email' value=''>";
+            cont = cont + "<span style='display: none;' id='email-error' class='text-danger'>Email is required</span>";
+            cont = cont + "</div>";
+
+            cont = cont + "<div class='mb-3'>";
+            cont = cont + "<label class='mb-2 d-block'>Phone</label>";
+            cont = cont + "<input type='text' class='form-control'  placeholder='Phone' name='phone' id='phone' value=''>";
+            cont = cont + "<span style='display: none;' id='phone-error' class='text-danger'>Phone is required</span>";
+            cont = cont + "</div>";
+
+            cont = cont + "<div class='mb-3'>";
+            cont = cont + "<label class='mb-2 d-block'>Password</label>";
+            cont = cont + "<input type='password' class='form-control' placeholder='Password' name='password' id='password' value=''>";
+            cont = cont + "<span style='display: none;' id='password-error' class='text-danger'>Password is required</span>";
+            cont = cont + "</div>";
+
+            cont = cont + "<div class='mb-3'>";
+            cont = cont + "<label class='mb-2 d-block'>Confirm Password</label>";
+            cont = cont + "<input type='password' class='form-control' placeholder='Confirm Password' name='confirm_password' id='confirm_password' value=''>";
+            cont = cont + "<span style='display: none;' id='confirm_password-error' class='text-danger'>Confirm Password is required</span>";
+            cont = cont + "</div>";
+
+            cont = cont + "<div class='card-footer'>";
+            cont = cont + "<div class='m-3 d-flex justify-content-center'>";
+            cont = cont + "<button id='submitDetails' type='button' onclick='submitRegister()'  class='btn btn-primary'>Submit Details</button>";
+            cont = cont + "</div></div>";
+
+ 
+            document.getElementById('registration-info').innerHTML = cont;
+
+        } catch (error) {
+
+            if (error.response && error.response.status === 422) {
+
+                let errors = error.response.data.errors;
+
+                Object.keys(errors).forEach(field => {
+
+                    let errorElement = document.getElementById(field + '-error');
+
+                    if (errorElement) {
+                        errorElement.textContent = errors[field][0];
+                        errorElement.style.display = 'block';
+                    }
+                });
+
+            } else {
+
+                alert(
+                    error.response?.data?.message ||
+                    'Something went wrong.'
+                );
+
+            }
+        }
+    }
+
+ 
+  document.addEventListener('DOMContentLoaded', function () {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+
+      if (ref) {
+          document.getElementById('ref').value = window.location.href;
+          document.getElementById('get-started-btn').click();
+          document.getElementById('btnSubmitLink').click();
+          
+      }
+  });
+ 
+ 
+
+</script>
 </body>
 
 </html>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
