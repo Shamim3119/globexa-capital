@@ -15,7 +15,12 @@ class GlobalSettings extends Model
                             'max_activation',
                             'max_withdrawal',
                             'dep_comm_level',
-                            'ref_comm'
+                            'ref_comm',
+                            'deposit_rate',
+                            'withdraw_rate',
+                            'ivr_com',
+
+               
 
                         ];
  

@@ -1,8 +1,11 @@
-<div>
- 
-    <br>
+@php
+    use App\Helpers\Toast;
+@endphp
 
-    <div class='row'>
+<div>
+    @include('livewire.settings.tab-menu')
+
+        <div class='row'>
         <div class='col-12 col-md-6'>
             <button 
                 wire:click="create"
@@ -17,17 +20,12 @@
                     <div class="card-title">{{ ucfirst($activeTab) }} Update</div>
                 </div>
 
-                <form wire:submit.prevent="store" wire:key="parameter-form-{{ $updateMode ? 'edit' : 'create' }}">
+                <form wire:submit.prevent="store" wire:key="slot-form-{{ $updateMode ? 'edit' : 'create' }}">
                     
                     <div class="card-body">
 
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="exampleCheck1" wire:model="inactive">
-                            <label class="form-check-label" for="exampleCheck1">Inactive</label>
-                        </div>
-
                         <div class="mb-3">
-                            <label class="mb-2">{{ ucfirst($activeTab) }} :</label>
+                            <label class="mb-2">Name :</label>
                             <input
                                 type="text"
                                 class="form-control"
@@ -38,10 +36,51 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        <div class="mb-3">
+                            <label class="mb-2">Team A Amount :</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Name"
+                                wire:model.defer="left_amount"
+                            >
+                            @error('name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="mb-2">Team B Amount  :</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Name"
+                                wire:model.defer="right_amount"
+                            >
+                            @error('name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="mb-2">Salary Amount  :</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Salary Amount"
+                                wire:model.defer="salary_amount"
+                            >
+                            @error('name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                     </div>
                     <div class="card-footer">
                         <div class="m-3 d-flex justify-content-center">
-                            @if($parameter_id)
+                            @if($slot_id)
                                 <button type="submit" class="btn btn-primary">Update</button>&nbsp;&nbsp;
                                 <button type="button" wire:click="cancel" class="btn btn-secondary">Cancel</button>
                             @else
@@ -67,28 +106,33 @@
                             <tr>
                                 <th style="width:2%">SL</th>
                                 <th>Name</th>
-                                <th style="width:15%;text-align:center;">Status</th>
+                                <th style="text-align:right;">Team A Amount</th>
+                                <th style="text-align:right;">Team B Amount</th>
+                                <th style="text-align:right;">Salary A Amount</th>
                                 <th style="text-align:center; width:150px;">Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @foreach($parameters as $parameter)
-                                <tr wire:key="parameter-row-{{ $parameter->id }}">
+                            @foreach($salarySlots as $slot)
+                                <tr wire:key="slot-row-{{ $slot->id }}">
 
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $parameter->name }}</td>
-                                    <td class="{{ $parameter->inactive ? 'text-danger' : '' }}" style="text-align:center">{{ $parameter->inactive == 0 ? 'Active' : 'Inactive' }}</td>
+                                    <td>{{ $slot->name }}</td>
+
+                                    <td style="text-align:right;">{{ $slot->left_amount }}</td>
+                                    <td style="text-align:right;">{{ $slot->right_amount }}</td>
+                                    <td style="text-align:right;">{{ $slot->salary_amount }}</td>
 
                                     <td style="text-align:center;width:150px;">
                                         <button   
-                                            wire:click="edit({{ $parameter->id }})"
+                                            wire:click="edit({{ $slot->id }})"
                                             class="btn btn-primary btn-sm">
                                             Edit
                                         </button>
 
                                         <button
-                                            wire:click="delete({{ $parameter->id }})"
+                                            wire:click="delete({{ $slot->id }})"
                                             class="btn btn-danger btn-sm"
                                         >
                                             Delete
@@ -104,7 +148,6 @@
         </div>
     </div>
 
-    {!! MyHelper::get_toast_dispatch() !!}
+    {!! Toast::get_toast_message() !!}
 
- 
 </div>

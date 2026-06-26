@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\RegistrationController;
 use App\Http\Controllers\Api\ResetPasswordController;
+use App\Http\Controllers\Api\ClientAccountController;
+use App\Http\Controllers\Api\UserProfile;
+
 
 Route::post('/client-login', [LoginController::class, 'login']);
 
@@ -14,6 +17,14 @@ Route::post('/reset', [ResetPasswordController::class, 'reset']);
 Route::post('/check-ref', [RegistrationController::class, 'checkRef']);
 Route::post('/registration', [RegistrationController::class, 'store']);
 Route::post('/register', [RegistrationController::class, 'varifiy']);
+
+Route::get('/get-profile', [UserProfile::class, 'getProfile']);
+Route::post('/update-profile', [UserProfile::class, 'updateProfile']);
+
+
+Route::get('/client-accounts', [ClientAccountController::class, 'index']);
+Route::post('/client-accounts', [ClientAccountController::class, 'save']);
+
 
 /*
 namespace App\Http\Controllers\Api;

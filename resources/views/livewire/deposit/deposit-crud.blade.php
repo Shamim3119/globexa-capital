@@ -8,7 +8,6 @@
     <div class='row'>
         <div class='col-12 col-md-12 col-lg-12'>
 
-            @include('livewire.clients.clients-form')
 
             <div @if($updateMode) style="display:none;" @endif id='boxView' class="card card-primary card-outline mb-4">
                 <div class="card-header">
@@ -21,28 +20,35 @@
                         <thead>
                             <tr>
                                 <th style="width:2%">SL</th>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Parent</th>
-                                <th style='text-align:center'>Team</th>
-                                <th>Phone</th>
-                                <th>Update</th>
-                                <th style='text-align:right'>Balance</th>
-                                <th style="width:15%;text-align:center;">Status</th>
+                                <th>Deposit By</th>
+                                <th>Deposit At</th>
+                                <th>Accept At</th>
+                                <th>Status</th>
+                                <th>Currency</th>
+                                <th style='text-align:right'>Before</th>
+                                <th style='text-align:right'>Amount</th>
+                                <th style='text-align:right'>After</th>
                                 <th style="text-align:center; width:150px;">Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @foreach($clients as $client)
+                            @foreach($deposits as $deposit)
                                 <tr
-                                    wire:key="client-row-{{ $client->id }}"
-                                    class="{{ $client->inactive == 1 ? 'text-danger' : '' }}"
+                                    wire:key="client-row-{{ $deposit->id }}"
+                                    class="{{ $deposit->status_id == 0 ? 'text-danger' : '' }}"
                                 >
+                               
 
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $client->id }}</td>
-                                    <td>{{ $client->name }}</td>
+                                    <td>{{ $deposit->deposit_by }}</td>
+                                    <td>{{ $deposit->deposit_at }}</td>
+                                    <td>{{ $deposit->accept_at }}</td>
+                                    <td>{{ $deposit->status_id }}</td>
+                                    <td>{{ $deposit->currency_id }}</td>
+                                    <td>{{ $deposit->deposit_by }}</td>
+
+
                                     <td>
                                         @if($client->ref_id == 0)
                                             Root
@@ -92,7 +98,7 @@
 
     {!! Toast::get_toast_message() !!}
 
-    <div    wire:ignore.self  class="modal fade modal-lg" id="ModalClient" tabindex="-1" aria-labelledby="ModalLiveLabel" style="display: none;" aria-hidden="true">
+    <div    wire:ignore.self class="modal fade modal-lg" id="ModalClient" tabindex="-1" aria-labelledby="ModalLiveLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -210,17 +216,6 @@
         </div>
     </div>
 
-    <script>
-        function copyText(text) 
-        {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-     
-                })
-                .catch(err => {
-         
-                });
-        }
-    </script>
+ 
 
 </div>

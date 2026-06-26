@@ -1,15 +1,7 @@
-@php
-    use App\Helpers\Toast;
-@endphp
-
-
-<div>
-    @include('livewire.settings.tab-menu')
-
-    <div class='row'>
-        <div class='col-6'>
-            <form wire:submit.prevent="save">
-                <div class="card card-primary card-outline mb-4">
+            <div @if(!$updateMode) style="display:none;" @endif id='boxNew' class="card card-primary card-outline mb-4">
+    
+                <form wire:submit.prevent="save">
+ 
                     <div class="card-header">
                         <div class="card-title">{{ ucfirst($activeTab) }} Update</div>
                     </div> 
@@ -20,11 +12,10 @@
                             <input type="text" class="form-control" wire:model="name">
                             @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
-
                         <div class="mb-3">
-                            <label>Email</label>
-                            <input readonly   type="email" class="form-control" wire:model="email">
-                            @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+                            <label>Address</label>
+                            <input type="address" class="form-control" wire:model="address">
+                            @error('emaaddressil') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="mb-3">
@@ -34,26 +25,33 @@
                         </div>
 
                         <div class="mb-3">
-                            <label>Address</label>
-                            <input type="address" class="form-control" wire:model="address">
-                            @error('address') <span class="text-danger">{{ $message }}</span> @enderror
+                            <label>Email</label>
+                            <input   type="email" class="form-control" wire:model="email">
+                            @error('email') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
+
+                        <div class="mb-3">
+                            <label>Web</label>
+                            <input  type="web" class="form-control" wire:model="web">
+                            @error('web') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
 
                         <div class='row'>
                             <div class='col-8 mt-3'>
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" id="img" wire:model="image">
+                                    <input type="file" class="form-control" id="img" wire:model="logo">
                                     <label class="input-group-text" for="img">Upload</label>
                                 </div>
                             </div>
-                         
+                        
                             <div class='col-4 d-flex justify-content-center align-items-center'>
-                                <img id="previewImage"
+                                <img id="previewlogo"
                                     src="
-                                        @if ($image)
-                                            {{ $image->temporaryUrl() }}
-                                        @elseif($user->image)
-                                            {{ asset('storage/' . $user->image) }}
+                                        @if ($logo)
+                                            {{ $logo->temporaryUrl() }}
+                                        @elseif($business->logo)
+                                            {{ asset('storage/' . $business->logo) }}
                                         @else
                                             https://via.placeholder.com/120
                                         @endif
@@ -80,21 +78,13 @@
                                 });
                             </script>
                         </div>
-
-
                     </div>
                     <div class="card-footer">
                         <div class="m-3 d-flex justify-content-center">
             
-                                <button type="submit" class="btn btn-success">Update</button>&nbsp;&nbsp;
-                                <a href="{{ route('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-success"><i class="bi bi-check-square"></i>  Update</button>&nbsp;&nbsp;
+                                <a href="{{ route('bussiness.index', ['tab' => 'bussiness']) }}" class="btn btn-secondary"><i class="bi bi-x-square"></i> Cancel</a>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
-   </div>
-
-    {!! Toast::get_toast_message() !!}
-    
-</div>
+                </form>
+            </div>

@@ -14,32 +14,23 @@
                     </div> 
                     <div class="card-body m-3">
 
-                        @for($i = 1; $i <= $gen_comm_level; $i++)
-
-                            <div class="mb-3">
-                                <label>
-                                    Generation Commission Level {{ $i }}
-                                </label>
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    wire:model="commissions.{{ $i }}"
-                                >
-
-                                @error("commissions.$i")
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                        @endfor
-
+                        <div class="mb-3">
+                            <label>Deposit Conversion Rate 1 $ = BDT Amount </label>
+                            <input type="text" class="form-control" wire:model="deposit_rate">
+                            @error('deposit_rate') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label>Witdraw Conversion Rate 1 $ = BDT Amount </label>
+                            <input type="text" class="form-control" wire:model="withdraw_rate">
+                            @error('withdraw_rate') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+ 
                     </div>
                     <div class="card-footer">
                         <div class="m-3 d-flex justify-content-center">
             
                                 <button type="submit" class="btn btn-success">Update</button>&nbsp;&nbsp;
-                                <a href="{{ route('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('bussiness.index', ['tab' => 'bussiness']) }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -48,5 +39,6 @@
    </div>
 
     {!! Toast::get_toast_message() !!}
+
 
 </div>
