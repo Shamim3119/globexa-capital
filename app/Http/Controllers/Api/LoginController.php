@@ -91,6 +91,7 @@ class LoginController extends Controller
                 'left_balance' => $leftBalance['balance'],
                 'right_balance' => $rightBalance['balance'],
 
+                'rank' => $designation ? $designation->rank : '',
                 'designation' => $designation ? $designation->name : '',
                 'salary_amount' => $designation ? $designation->salary_amount : 0,
 

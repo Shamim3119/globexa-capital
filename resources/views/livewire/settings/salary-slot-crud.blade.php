@@ -6,7 +6,7 @@
     @include('livewire.settings.tab-menu')
 
         <div class='row'>
-        <div class='col-12 col-md-6'>
+        <div class='col-12 col-md-8'>
             <button 
                 wire:click="create"
                 class="mb-3 btn btn-sm btn-primary"
@@ -23,7 +23,6 @@
                 <form wire:submit.prevent="store" wire:key="slot-form-{{ $updateMode ? 'edit' : 'create' }}">
                     
                     <div class="card-body">
-
                         <div class="mb-3">
                             <label class="mb-2">Name :</label>
                             <input
@@ -36,6 +35,20 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+
+
+                    <div class="mb-3">
+                        <label class="mb-2">Rank :</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Rank"
+                            wire:model.defer="rank"
+                        >
+                        @error('rank')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
 
                         <div class="mb-3">
                             <label class="mb-2">Team A Amount :</label>
@@ -105,6 +118,7 @@
                         <thead>
                             <tr>
                                 <th style="width:2%">SL</th>
+                                <th>Rank</th>
                                 <th>Name</th>
                                 <th style="text-align:right;">Team A Amount</th>
                                 <th style="text-align:right;">Team B Amount</th>
@@ -118,6 +132,7 @@
                                 <tr wire:key="slot-row-{{ $slot->id }}">
 
                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $slot->rank }}</td>
                                     <td>{{ $slot->name }}</td>
 
                                     <td style="text-align:right;">{{ $slot->left_amount }}</td>

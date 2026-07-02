@@ -10,11 +10,12 @@ class SalarySlotCrud extends Component
     public $updateMode = false;
     public $activeTab = 'salary-slot';
  
-    public $name, $left_amount,$right_amount, $salary_amount, $slot_id;
+    public $name, $rank, $left_amount,$right_amount, $salary_amount, $slot_id;
     public $salarySlots;
 
     private function resetInputFields()
     {
+        $this->rank = '';
         $this->name = '';
         $this->left_amount = '';
         $this->right_amount = '';
@@ -38,6 +39,7 @@ class SalarySlotCrud extends Component
     {
         $validatedData = $this->validate([
             'name' => 'required|string',
+            'rank' => 'required|string',
             'left_amount' => 'required|numeric',
             'right_amount' => 'required|numeric',
             'salary_amount' => 'required|numeric',
@@ -67,6 +69,7 @@ class SalarySlotCrud extends Component
         $salary = SalarySlot::findOrFail($id);
 
         $this->name = $salary->name;
+        $this->rank = $salary->rank;
         $this->left_amount = $salary->left_amount;
         $this->right_amount = $salary->right_amount;
         $this->salary_amount = $salary->salary_amount;

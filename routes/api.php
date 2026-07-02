@@ -65,6 +65,7 @@ Route::get('/team-summary', [TeamController::class, 'summary']);
 Route::get('/deposite-commissions', [DepositeCommissionController::class, 'index']);
 
 Route::get('/dashboard-summary', [DashboardController::class, 'dashboardSummary']);
+Route::get('/income-breakdown', [DashboardController::class, 'incomeBreakdown']);
  
 
 /*

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class IncomeReference extends Model
 {
+    protected $table = 'income_references'; 
+
     protected $fillable = [
         'client_id',
         'amount',
