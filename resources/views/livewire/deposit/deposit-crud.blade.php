@@ -9,7 +9,7 @@
         <div class='col-12 col-md-12 col-lg-12'>
 
 
-            <div @if($updateMode) style="display:none;" @endif id='boxView' class="card card-primary card-outline mb-4">
+            <div class="card card-primary card-outline mb-4">
                 <div class="card-header">
                     <div class="card-title">{{ ucfirst($activeTab) }} List</div>
                 </div>
@@ -21,70 +21,72 @@
                             <tr>
                                 <th style="width:2%">SL</th>
                                 <th>Deposit By</th>
-                                <th>Deposit At</th>
-                                <th>Accept At</th>
-                                <th>Status</th>
-                                <th>Currency</th>
-                                <th style='text-align:right'>Before</th>
+                                <th style='text-align:center'>Deposit At</th>
                                 <th style='text-align:right'>Amount</th>
-                                <th style='text-align:right'>After</th>
-                                <th style="text-align:center; width:150px;">Action</th>
+                                <th style='text-align:right'>Exch. Amt.</th>
+                                <th style='text-align:center'>Currency</th>
+                                <th style='text-align:center'>Slip</th>
+                                <th style='text-align:center'>Account</th>
+              
+                                <th style='text-align:center'>Accept At</th>
+                                <th style='text-align:center'>Status</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             @foreach($deposits as $deposit)
-                                <tr
-                                    wire:key="client-row-{{ $deposit->id }}"
-                                    class="{{ $deposit->status_id == 0 ? 'text-danger' : '' }}"
-                                >
-                               
-
+                                <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $deposit->deposit_by }}</td>
-                                    <td>{{ $deposit->deposit_at }}</td>
-                                    <td>{{ $deposit->accept_at }}</td>
-                                    <td>{{ $deposit->status_id }}</td>
-                                    <td>{{ $deposit->currency_id }}</td>
-                                    <td>{{ $deposit->deposit_by }}</td>
+                                    <td>{{ $deposit->depositer->id ?? '' }} / {{ $deposit->depositer->name ?? '' }}</td>
+                                    <td style='text-align:center'>{{ $deposit->created_at->format('d M y, h:i A') }}</td>
 
-
-                                    <td>
-                                        @if($client->ref_id == 0)
-                                            Root
-                                        @else
-                                            {{ $client->ref_id.' / '.$client->parent->name ?? 'N/A' }}
-                                        @endif
-                                    </td>
+                                    <td style='text-align:right'> {{ $deposit->amount ?? '' }}</td>
+                                    <td style='text-align:right'> {{ $deposit->exchange_amount ?? '' }}</td>
+                                    <td style='text-align:center'>{{ $deposit->account->operator->currency->name ?? '' }}</td>
                                     <td style='text-align:center'>
-                                        @if($client->ref_id == 0)
-                                        -
+                                        @if($deposit->deposit_doc)
+                                            <img src="{{ asset($deposit->deposit_doc) }}"
+                                                width="40"
+                                                height="40"
+                                                style="cursor:pointer;border-radius:5px;object-fit:cover"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#slipModal"
+                                                onclick="showSlip('{{ asset($deposit->deposit_doc) }}')">
                                         @else
-                                            @if($client->site == 0)
-                                                A
-                                            @else
-                                                B
-                                            @endif
+                                            -
                                         @endif
                                     </td>
-                                    <td>{{ $client->phone }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($client->updated_at)->format('j M y g:i A') }}</td>
-                                    <td style='text-align:right'>{{ $client->balance }}</td>
-                                    <td class="{{ $client->inactive ? 'text-danger' : '' }}" style="text-align:center">{{ $client->inactive == 0 ? 'Active' : 'Inactive' }}</td>
+                            
 
-                                    <td style="text-align:center;width:150px;">
-                                        <button   
-                                            wire:click="edit({{ $client->id }})"
-                                            class="btn btn-primary btn-sm">
-                                            Edit
-                                        </button>
+                                  
+                                 
+                                    <td style='text-align:center'> {{ $deposit->account->account_no ?? '' }}</td>
+                                    
 
-                                        <button data-bs-toggle="modal" data-bs-target="#ModalClient" 
-                                            wire:click="showDetails({{ $client->id }})"
-                                            class="btn btn-success btn-sm"
-                                        >
-                                            Details
-                                        </button>
+                                   <td style='text-align:center'>{{ $deposit->accept_at?->format('d M y, h:i A') ?? '-' }}</td>
+
+                                    <td style='text-align:center'>
+                                        @php
+                                            $status = $deposit->status->name ?? '';
+                                        @endphp
+
+                                        @if($status=='Pending')
+                                            <button
+                                                class="btn btn-warning btn-sm"
+                                                wire:click="openStatusModal({{ $deposit->id }})">
+                                                Pending
+                                            </button>
+
+                                        @elseif($status=='Accept')
+                                            <span class="btn btn-success btn-sm">
+                                                Accept
+                                            </span>
+
+                                        @elseif($status=='Reject')
+                                            <span class="btn btn-danger btn-sm">
+                                                Reject
+                                            </span>
+
+                                        @endif
                                     </td>
 
                                 </tr>
@@ -96,126 +98,151 @@
         </div>
     </div>
 
-    {!! Toast::get_toast_message() !!}
-
-    <div    wire:ignore.self class="modal fade modal-lg" id="ModalClient" tabindex="-1" aria-labelledby="ModalLiveLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="slipModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="ModalLiveLabel">Client Details</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Deposit Slip</h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
                 </div>
-                <div class="modal-body">
 
-                    @if($selectedClient)
+                <div class="modal-body text-center">
 
-                        <div class="row">
+                    <img id="slipImage"
+                        src=""
+                        class="img-fluid rounded">
 
-                            <div class="col-md-4 text-center">
-                                @if($selectedClient->photo)
-                                    <img
-                                        src="{{ asset('storage/' . $selectedClient->photo) }}"
-                                        class="img-fluid rounded"
-                                        style="max-height:200px;"
-                                    >
-                                @else
-                                    <img
-                                        src="https://via.placeholder.com/200"
-                                        class="img-fluid rounded"
-                                    >
-                                @endif
-                            </div>
-
-                            <div class="col-md-8">
-
-                                <table class="table table-bordered">
-
-                                    <tr>
-                                        <th width="30%">ID</th>
-                                        <td>{{ $selectedClient->id }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Name</th>
-                                        <td>{{ $selectedClient->name }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Email</th>
-                                        <td>{{ $selectedClient->email }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Phone</th>
-                                        <td>{{ $selectedClient->phone }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Address</th>
-                                        <td>{{ $selectedClient->address }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Status</th>
-                                        <td>
-                                            {{ $selectedClient->inactive ? 'Inactive' : 'Active' }}
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Team A</th>
-                                        <td>{{ $leftCount }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Team B</th>
-                                        <td>{{ $rightCount }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Team A Reference</th>
-                                        <td>
-                                            <span id="leftRef">
-                                                {{ 'https://globexacapital.com?ref='.$selectedClient->left_side }}
-                                            </span>
-
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-outline-primary ms-2"
-                                                onclick="copyText('{{ 'https://globexacapital.com?ref='.$selectedClient->left_side }}')"
-                                            >
-                                            <i class="bi bi-copy"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Team B Reference</th>
-                                        <td>
-                                            <span id="rightRef">
-                                                {{ 'https://globexacapital.com?ref='.$selectedClient->right_side }}
-                                            </span>
-
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-outline-primary ms-2"
-                                                onclick="copyText('{{ 'https://globexacapital.com?ref='.$selectedClient->right_side }}')"
-                                            >
-                                            <i class="bi bi-copy"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                </table>
-                            </div>
-                        </div>
-                    @endif
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+
             </div>
         </div>
     </div>
 
- 
+
+    <div class="modal fade"
+        id="statusModal"
+        tabindex="-1"
+        wire:ignore.self>
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>Update Deposit Status</h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+
+
+                    @if($selectedDeposit)
+
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered">
+
+                            <tr>
+                                <th width="35%">Deposit By</th>
+                                <td>
+                                    {{ $selectedDeposit->depositer->id ?? '' }}
+                                    /
+                                    {{ $selectedDeposit->depositer->name ?? '' }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>Deposit At</th>
+                                <td>
+                                    {{ $selectedDeposit->created_at->format('d M y, h:i A') }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>Amount</th>
+                                <td style="text-align:right">
+                                    {{ number_format($selectedDeposit->amount,2) }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>Currency</th>
+                                <td>
+                                    {{ $selectedDeposit->account->operator->currency->name ?? '' }}
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                    @endif
+
+
+                    <select
+                        class="form-select"
+                        wire:model="selectedStatus">
+
+                        <option value="">Select Status</option>
+
+                        <option value="2">
+                            Accept
+                        </option>
+
+                        <option value="3">
+                            Reject
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        class="btn btn-primary"
+                        wire:click="updateStatus">
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {!! Toast::get_toast_message() !!}
+
+    <script>
+        function showSlip(image){
+            document.getElementById('slipImage').src = image;
+        }
+    </script>
+
+    <script>
+        document.addEventListener('livewire:init', () => {
+
+            Livewire.on('openStatusModal', () => {
+                new bootstrap.Modal(document.getElementById('statusModal')).show();
+            });
+
+            Livewire.on('closeStatusModal', () => {
+                bootstrap.Modal.getInstance(document.getElementById('statusModal')).hide();
+            });
+
+        });
+    </script>
+
 
 </div>

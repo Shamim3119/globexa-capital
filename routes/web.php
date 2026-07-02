@@ -18,7 +18,15 @@ use App\Livewire\Clients\ClientsCrud;
 use App\Livewire\Settings\GlobalSettingsCrud;
 use App\Livewire\Settings\GenerationCommissionCrud;
 use App\Livewire\Settings\DepositeCommissionCrud;
+use App\Livewire\Settings\InvestmentChargeCrud;
 
+use App\Livewire\Income\IncomeDailyCrud;
+use App\Livewire\Income\IncomeGenerationCrud;
+use App\Livewire\Income\IncomeReferenceCrud;
+use App\Livewire\Income\IncomeSalaryCrud;
+use App\Livewire\Income\IncomeIBCrud;
+
+ 
 use App\Livewire\Settings\RateCrud;
 use App\Livewire\Settings\SalarySlotCrud;
 
@@ -57,13 +65,23 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/generation-commission', GenerationCommissionCrud::class)->name('generation-commission.index');
-    Route::get('/deposite-commission', DepositeCommissionCrud::class)->name('deposite-commission.index');
+    Route::get('/investment-commission', DepositeCommissionCrud::class)->name('deposite-commission.index');
+    Route::get('/investment-charge', InvestmentChargeCrud::class)->name('investment-charge.index');
     
     Route::get('/clients', ClientsCrud::class)->name('clients.index');
     Route::get('/deposit', DepositCrud::class)->name('deposit.index');
     Route::get('/withdraw', WithdrawCrud::class)->name('withdraw.index');
 
+ 
 
+
+    Route::get('/reference', IncomeReferenceCrud::class)->name('reference.index');
+    Route::get('/daily', IncomeDailyCrud::class)->name('daily.index');
+    Route::get('/generation', IncomeGenerationCrud::class)->name('generation.index');
+    Route::get('/salary', IncomeSalaryCrud::class)->name('salary.index');
+    Route::get('/ib', IncomeIBCrud::class)->name('ib.index');
+
+ 
    // Route::get('/parameter', ParameterCrud::class)->name('parameter.index');
 
 

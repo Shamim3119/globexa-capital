@@ -22,9 +22,16 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link {{ $activeTab == 'deposite-commission' ? 'active' : '' }}" 
-            href="{{ route('deposite-commission.index', ['tab' => 'deposite-commission']) }}">
-            Deposite Commission
+            <a class="nav-link {{ $activeTab == 'investment-commission' ? 'active' : '' }}" 
+            href="{{ route('deposite-commission.index', ['tab' => 'investment-commission']) }}">
+            Investment Commission
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {{ $activeTab == 'investment-charge' ? 'active' : '' }}" 
+            href="{{ route('investment-charge.index', ['tab' => 'investment-charge']) }}">
+            Investment Charge
             </a>
         </li>
 

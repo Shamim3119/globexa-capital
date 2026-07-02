@@ -8,7 +8,7 @@ use App\Models\DepositeCommission;
 
 class DepositeCommissionCrud extends Component
 {
-    public $activeTab = 'deposite-commission';
+    public $activeTab = 'investment-commission';
 
     public $dep_comm_level = 0;
 

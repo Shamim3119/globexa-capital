@@ -19,6 +19,7 @@ class GlobalSettings extends Model
                             'deposit_rate',
                             'withdraw_rate',
                             'ivr_com',
+                            'inv_charge_level',
 
                
 

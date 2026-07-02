@@ -20,7 +20,7 @@
                                 <div class='row'>
                                     <div class='col-6'>
                                         <label>
-                                            Validity Days {{ $i }}
+                                            Above Validity Days {{ $i }}
                                         </label>
 
                                         <input
@@ -35,7 +35,7 @@
                                     </div>
                                     <div class='col-6'>
                                         <label>
-                                            Commission Level {{ $i }}
+                                            Commission apply {{ $i }} (%)
                                         </label>
 
                                         <input

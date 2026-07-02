@@ -99,7 +99,58 @@
                 </li>
 
 
-                <li class="nav-item {{ request()->routeIs('bussiness.*') || request()->routeIs('profile.*') || request()->routeIs('generation-commission.*') || request()->routeIs('global-settings.*') ? 'menu-open' : '' }}">
+              <li class="nav-item {{ request()->routeIs('reference.*') || request()->routeIs('daily.*') || request()->routeIs('generation.*') ? 'menu-open' : '' }}">
+                <a href="#" class="nav-link active">
+                  <i class="nav-icon bi bi-currency-dollar"></i>
+                  <p>
+                    Income
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+
+                <ul class="nav nav-treeview">
+
+                  <li class="nav-item">
+                      <a href="{{ route('reference.index', ['tab' => 'reference', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'reference' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Reference</p>
+                      </a>
+                  </li>
+
+
+                  <li class="nav-item">
+                      <a href="{{ route('daily.index', ['tab' => 'daily', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'daily' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Daily</p>
+                      </a>
+                  </li>
+
+                  <li class="nav-item">
+                      <a href="{{ route('generation.index', ['tab' => 'generation', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'generation' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>generation</p>
+                      </a>
+                  </li>
+
+                  <li class="nav-item">
+                      <a href="{{ route('salary.index', ['tab' => 'salary', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'salary' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Salary</p>
+                      </a>
+                  </li>
+
+                    <li class="nav-item">
+                      <a href="{{ route('ib.index', ['tab' => 'ib', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'ib' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>IB</p>
+                      </a>
+                  </li>
+
+                </ul>
+              </li>
+
+
+              <li class="nav-item {{ request()->routeIs('bussiness.*') || request()->routeIs('profile.*') || request()->routeIs('generation-commission.*') || request()->routeIs('global-settings.*') ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link active">
                   <i class="nav-icon bi bi-boxes"></i>
                   <p>
@@ -111,7 +162,7 @@
                 <ul class="nav nav-treeview">
 
                   <li class="nav-item">
-                      <a href="{{ route('rate.index', ['tab' => 'rate', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'index' ? 'active' : '' }}">
+                      <a href="{{ route('rate.index', ['tab' => 'rate', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'rate' ? 'active' : '' }}">
                         <i class="nav-icon bi bi-circle"></i>
                         <p>Rate</p>
                       </a>
@@ -133,12 +184,19 @@
                   </li>
 
                   <li class="nav-item">
-                      <a href="{{ route('deposite-commission.index', ['tab' => 'Deposite Commission', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'deposite-commission' ? 'active' : '' }}">
+                      <a href="{{ route('deposite-commission.index', ['tab' => 'Investment Commission', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'investment-commission' ? 'active' : '' }}">
                         <i class="nav-icon bi bi-circle"></i>
-                        <p>Deposite Commission</p>
+                        <p>Investment Commission</p>
                       </a>
                   </li>
 
+
+                  <li class="nav-item">
+                      <a href="{{ route('investment-charge.index', ['tab' => 'Investment Charge', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'investment-charge' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Investment Charge</p>
+                      </a>
+                  </li>
 
                   <li class="nav-item">
                       <a href="{{ route('salary-slot.index', ['tab' => 'Salary Slot', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'salary-slot' ? 'active' : '' }}">

@@ -9,7 +9,8 @@ class GlobalSettingsCrud extends Component
 {
     public $global_settings;
     public $activeTab = 'global-settings';
-    public $ref_comm, $ivr_com, $gen_comm_level, $dep_comm_level, $min_deposit, $min_activation, $min_withdrawal, $max_deposit, $max_activation, $max_withdrawal; 
+    public $ref_comm, $ivr_com, $gen_comm_level, $dep_comm_level, $inv_charge_level; 
+    public $min_deposit, $min_activation, $min_withdrawal, $max_deposit, $max_activation, $max_withdrawal; 
 
     public function mount()
     {
@@ -25,6 +26,9 @@ class GlobalSettingsCrud extends Component
         $this->max_activation = $this->global_settings->max_activation;
         $this->max_withdrawal = $this->global_settings->max_withdrawal;
         $this->dep_comm_level = $this->global_settings->dep_comm_level;
+        $this->inv_charge_level = $this->global_settings->inv_charge_level;
+
+        
         $this->ivr_com = $this->global_settings->ivr_com;
 
         $this->ref_comm = $this->global_settings->ref_comm;
@@ -41,6 +45,8 @@ class GlobalSettingsCrud extends Component
             'ref_comm' => 'required|numeric',
             'gen_comm_level' => 'required|numeric',
             'dep_comm_level' => 'required|numeric',
+            'inv_charge_level' => 'required|numeric',
+            
             'ivr_com' => 'required|numeric',
             
             'min_deposit' => 'required|numeric',
@@ -63,6 +69,8 @@ class GlobalSettingsCrud extends Component
             'max_activation' => $this->max_activation,
             'max_withdrawal' => $this->max_withdrawal,
             'dep_comm_level' => $this->dep_comm_level,
+            'inv_charge_level' => $this->inv_charge_level,
+            
             'ivr_com' => $this->ivr_com,
             
             

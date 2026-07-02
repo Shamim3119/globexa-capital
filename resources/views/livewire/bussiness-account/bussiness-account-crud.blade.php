@@ -71,7 +71,41 @@
         @enderror
     </div>
 
- 
+    <div class="mb-3">
+        <label>QR Code</label>
+
+        <input
+            type="file"
+            class="form-control"
+            wire:model="qr_code"
+            accept="image/*"
+        >
+
+        @error('qr_code')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+
+        {{-- Preview newly selected image --}}
+        @if($qr_code)
+            <div class="mt-2">
+                <img src="{{ $qr_code->temporaryUrl() }}"
+                    width="150"
+                    class="img-thumbnail">
+            </div>
+
+        {{-- Show existing image while editing --}}
+        @elseif($old_qr_code)
+            <div class="mt-2">
+                <img src="{{ asset('storage/qr_code/'.$old_qr_code) }}"
+                    width="150"
+                    class="img-thumbnail">
+            </div>
+        @endif
+
+        <div wire:loading wire:target="qr_code" class="text-primary mt-2">
+            Uploading...
+        </div>
+    </div>
 
     <div class="mb-3">
 

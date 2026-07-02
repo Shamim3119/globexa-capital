@@ -27,8 +27,11 @@
                                 <th style='text-align:center'>Team</th>
                                 <th>Phone</th>
                                 <th>Update</th>
-                                <th style='text-align:right'>Balance</th>
                                 <th style="width:15%;text-align:center;">Status</th>
+                                <th style='text-align:right'>Deposit</th>
+                                <th style='text-align:right'>Investment</th>
+                                <th style='text-align:right'>Income</th>
+                    
                                 <th style="text-align:center; width:150px;">Action</th>
                             </tr>
                         </thead>
@@ -36,9 +39,9 @@
                         <tbody>
                             @foreach($clients as $client)
                                 <tr
-                                    wire:key="client-row-{{ $client->id }}"
-                                    class="{{ $client->inactive == 1 ? 'text-danger' : '' }}"
-                                >
+                                        wire:key="client-row-{{ $client->id }}"
+                                        class="{{ $client->inactive ? 'table-danger' : '' }}"
+                                    >
 
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $client->id }}</td>
@@ -63,9 +66,14 @@
                                     </td>
                                     <td>{{ $client->phone }}</td>
                                     <td>{{ \Carbon\Carbon::parse($client->updated_at)->format('j M y g:i A') }}</td>
-                                    <td style='text-align:right'>{{ $client->balance }}</td>
                                     <td class="{{ $client->inactive ? 'text-danger' : '' }}" style="text-align:center">{{ $client->inactive == 0 ? 'Active' : 'Inactive' }}</td>
 
+                                    <td style='text-align:right'>{{ $client->deposit_balance }}</td>
+                                    <td style='text-align:right'>{{ $client->investment_balance }}</td>
+                                    <td style='text-align:right'>{{ $client->income_balance }}</td>
+
+ 
+         
                                     <td style="text-align:center;width:150px;">
                                         <button   
                                             wire:click="edit({{ $client->id }})"
@@ -90,7 +98,7 @@
         </div>
     </div>
 
-    {!! Toast::get_toast_message() !!}
+ {!! Toast::get_toast_message() !!}
 
     <div    wire:ignore.self  class="modal fade modal-lg" id="ModalClient" tabindex="-1" aria-labelledby="ModalLiveLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog">

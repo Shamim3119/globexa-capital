@@ -8,9 +8,16 @@ use Livewire\Attributes\On;
 use App\Models\Parameter;
 use App\Models\BankOperator;
 use App\Models\BussinessAccount;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class BussinessAccountCrud extends Component
 {
+     use WithFileUploads;
+
+    public $qr_code;
+    public $old_qr_code;
+
     public $ref_id;
     public $ref_type_id = 0;
     public $bank_operators = [];
@@ -41,6 +48,9 @@ class BussinessAccountCrud extends Component
         $this->account_name = '';
         $this->business_id = 1;
         $this->inactive = 0;
+
+        $this->qr_code = null;
+        $this->old_qr_code = null;
     }
 
     // ======================
@@ -58,6 +68,9 @@ class BussinessAccountCrud extends Component
         $this->account_name = $account->account_name;
         $this->business_id = $account->business_id;
         $this->inactive = $account->inactive;
+
+        $this->old_qr_code = $account->qr_code;
+        $this->qr_code = null;
     }
 
     // ======================
@@ -83,6 +96,26 @@ class BussinessAccountCrud extends Component
         ]);
 
 
+        if ($this->qr_code) {
+
+            if ($account->qr_code && Storage::disk('public')->exists('qr_code/'.$account->qr_code)) {
+                Storage::disk('public')->delete('qr_code/'.$account->qr_code);
+            }
+
+            $filename = time().'_'.$this->qr_code->getClientOriginalName();
+
+            $this->qr_code->storeAs(
+                'qr_code',
+                $filename,
+                'public'
+            );
+
+            $data['qr_code'] = $filename;
+        }
+
+        $account->update($data);
+
+
         $this->dispatch('show-toast', message: 'Bussiness Account Updated Successfully.');
 
         $this->resetInputFields();
@@ -101,12 +134,26 @@ class BussinessAccountCrud extends Component
             'business_id' => 'required',
         ]);
 
+        $filename = null;
+
+        if ($this->qr_code) {
+            $filename = time().'_'.$this->qr_code->getClientOriginalName();
+
+            $this->qr_code->storeAs(
+                'qr_code',
+                $filename,
+                'public'
+            );
+        }
+
+
         BussinessAccount::create([
             'operator_id' => $this->operator_id,
             'account_no' => $this->account_no,
             'account_name' => $this->account_name,
             'business_id' => $this->business_id,
             'inactive' => $this->inactive ? 1 : 0,
+            'qr_code' => $filename,
         ]);
 
  

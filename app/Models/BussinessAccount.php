@@ -13,6 +13,7 @@ class BussinessAccount extends Model
                             'operator_id', 
                             'inactive',
                             'balance',
+                            'qr_code',
                         ];
 
     public function operator()

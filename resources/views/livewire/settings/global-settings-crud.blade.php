@@ -28,9 +28,15 @@
                         </div>
 
                         <div class="mb-3">
-                            <label>Deposite Commission Level</label>
+                            <label>Investment Commission Level</label>
                             <input type="text" class="form-control" wire:model="dep_comm_level">
                             @error('dep_comm_level') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Investment Charge Level</label>
+                            <input type="text" class="form-control" wire:model="inv_charge_level">
+                            @error('inv_charge_level') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
 
 
