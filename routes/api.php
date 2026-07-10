@@ -11,13 +11,12 @@ use App\Http\Controllers\Api\WithdrawController;
 use App\Http\Controllers\Api\InvestmentController;
 use App\Http\Controllers\Api\DepositeCommissionController;
 
+use App\Http\Controllers\Api\RefundController;
+ 
 use App\Http\Controllers\Api\DepositController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\P2PController;
 use App\Http\Controllers\Api\DashboardController;
-
-
-
 
 use App\Http\Controllers\Api\UserProfile;
 
@@ -54,6 +53,10 @@ Route::post('/p2p', [P2PController::class, 'save']);
 Route::get('/investment', [InvestmentController::class, 'index']);
 Route::post('/investment', [InvestmentController::class, 'save']);
 Route::post('/investment/upgrade', [InvestmentController::class, 'upgrade']);
+
+
+Route::get('/refund', [RefundController::class, 'index']);
+Route::post('/refund', [RefundController::class, 'save']);
 
 
 Route::get('/withdraw', [WithdrawController::class, 'index']);

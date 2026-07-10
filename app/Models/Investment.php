@@ -12,6 +12,9 @@ class Investment extends Model
                 'amount',
                 'before_invest',
                 'after_invest',
+                'inactive',
+                'created_at',
+                'updated_at',
                 ];
 
     public function investor()

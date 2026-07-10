@@ -20,7 +20,12 @@ class Client extends Model
                             'photo',
                             'level',
                             'otp',
+                            'income_balance',
+                            'deposit_balance',
+                            'investment_balance'
                         ];
+
+ 
 
     public function parent()
     {

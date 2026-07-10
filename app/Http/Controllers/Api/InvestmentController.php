@@ -10,6 +10,8 @@ use App\Models\Client;
 use Illuminate\Support\Facades\DB;
 use App\Models\GlobalSettings;
 use App\Models\IncomeReference;
+use App\Models\IncomeDaily;
+use App\Models\Refund;
 
 class InvestmentController extends Controller
 {
@@ -17,25 +19,38 @@ class InvestmentController extends Controller
      * GET
      * List all accounts or single account
      */
-    public function index(Request $request)
-    {
-        $query = Investment::query();
 
-        if ($request->filled('id')) {
-            $query->where('id', $request->id);
-        }
 
-        if ($request->filled('client_id')) {
-            $query->where('client_id', $request->client_id);
-        }
+public function index(Request $request)
+{
+    $query = Investment::query();
 
-        $accounts = $query->orderBy('id', 'desc')->get();
-
-        return response()->json([
-            'status' => true,
-            'data' => $accounts
-        ]);
+    if ($request->filled('id')) {
+        $query->where('id', $request->id);
     }
+
+    if ($request->filled('client_id')) {
+        $query->where('client_id', $request->client_id);
+    }
+
+    $accounts = $query
+        ->addSelect([
+            'total_income' => IncomeDaily::selectRaw('COALESCE(SUM(amount),0)')
+                ->whereColumn('income_dailies.client_id', 'investments.client_id')
+                ->whereColumn('income_dailies.invest_id', 'investments.id'),
+
+            'refund_status' => Refund::select('status_id')
+                ->whereColumn('refunds.investment_id', 'investments.id')
+                ->limit(1),
+        ])
+        ->orderBy('id', 'desc')
+        ->get();
+
+    return response()->json([
+        'status' => true,
+        'data' => $accounts
+    ]);
+}
 
     public function upgrade(Request $request)
     {

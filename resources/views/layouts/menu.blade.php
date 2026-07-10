@@ -70,10 +70,6 @@
                       <p>Transfer Wallet</p>
                     </a>
                   </li>
-
-
-                  
- 
                 </ul>
               </li>
 
@@ -97,6 +93,13 @@
                           <p>Withdraw</p>
                   </a>
                 </li>
+
+                <li class="nav-item">
+                <a href="{{ route('refund.index') }}" class="nav-link active">
+                    <i class="nav-icon bi bi-arrow-counterclockwise"></i>
+                    <p>Refund</p>
+                </a>
+              </li>
 
 
               <li class="nav-item {{ request()->routeIs('reference.*') || request()->routeIs('daily.*') || request()->routeIs('generation.*') ? 'menu-open' : '' }}">
@@ -219,6 +222,14 @@
                         <p>Profile</p>
                       </a>
                   </li>
+
+                  <li class="nav-item">
+                      <a href="{{ route('change-password.index', ['tab' => 'Change Password', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'change-password' ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>Change Password</p>
+                      </a>
+                  </li>
+
 
                 </ul>
               </li>

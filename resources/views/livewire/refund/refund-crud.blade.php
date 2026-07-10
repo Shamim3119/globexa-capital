@@ -20,63 +20,51 @@
                         <thead>
                             <tr>
                                 <th style="width:2%">SL</th>
-                                <th>Deposit By</th>
-                                <th style='text-align:center'>Deposit At</th>
+                     
+                                <th>Apply By</th>
+                                <th style='text-align:center'>Apply At</th>
+                                <th style='text-align:center'>Charge</th>
+                                <th style='text-align:center'>Pass Day</th>
                                 <th style='text-align:right'>Amount</th>
-                                <th style='text-align:right'>Exch. Amt.</th>
-                                <th style='text-align:center'>Currency</th>
-                                <th style='text-align:center'>Slip</th>
-                                <th style='text-align:center'>Trx ID</th>
-                                <th style='text-align:center'>Account</th>
-              
-                                <th style='text-align:center'>Accept At</th>
+                                <th style='text-align:right'>Deduct</th>
+                                <th style='text-align:right'>Return</th>
+                                <th style='text-align:center'>Refund At</th>
                                 <th style='text-align:center'>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($deposits as $deposit)
+                            @foreach($refunds as $refund)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $deposit->depositer->id ?? '' }} / {{ $deposit->depositer->name ?? '' }}</td>
-                                    <td style='text-align:center'>{{ $deposit->created_at->format('d M y, h:i A') }}</td>
+                                    <td>{{ $refund->member->id ?? '' }} / {{ $refund->member->name ?? '' }}</td>
+                                    <td style='text-align:center'>{{ $refund->created_at->format('d M y, h:i A') }}</td>
 
-                                    <td style='text-align:right'> {{ $deposit->amount ?? '' }}</td>
-                                    <td style='text-align:right'> {{ $deposit->exchange_amount ?? '' }}</td>
-                                    <td style='text-align:center'>{{ $deposit->account->operator->currency->name ?? '' }}</td>
                                     <td style='text-align:center'>
-                                        @if($deposit->deposit_doc)
-                                            <img src="{{ asset($deposit->deposit_doc) }}"
-                                                width="40"
-                                                height="40"
-                                                style="cursor:pointer;border-radius:5px;object-fit:cover"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#slipModal"
-                                                onclick="showSlip('{{ asset($deposit->deposit_doc) }}')">
-                                        @else
-                                            -
-                                        @endif
+                                        {{ $refund->charge ?? '' }}
                                     </td>
-                            
-
-                                    <td style="width:150px; text-align:center; word-break:break-word; white-space:normal;">
-                                        {{ $deposit->trxid ?? '' }}
+                                     <td style='text-align:center'>
+                                        {{ $refund->pass_day ?? '' }}
                                     </td>
+                                    <td style='text-align:right'> {{ $refund->amount ?? '' }}</td>
+                                    <td style='text-align:right'> {{ $refund->deduct ?? '' }}</td>
+                                    <td style='text-align:right'>{{ $refund->return_amount ?? '' }}</td>
+          
+                       
+ 
                                  
-                                    <td style="width:200px; text-align:center; word-break:break-word; white-space:normal;">
-                                        {{ $deposit->account->account_no ?? '' }}
-                                    </td>
 
-                                   <td style='text-align:center'>{{ $deposit->accept_at?->format('d M y, h:i A') ?? '-' }}</td>
+
+                                   <td style='text-align:center'>{{ $refund->accept_at?->format('d M y, h:i A') ?? '-' }}</td>
 
                                     <td style='text-align:center'>
                                         @php
-                                            $status = $deposit->status->name ?? '';
+                                            $status = $refund->status->name ?? '';
                                         @endphp
 
                                         @if($status=='Pending')
                                             <button
                                                 class="btn btn-warning btn-sm"
-                                                wire:click="openStatusModal({{ $deposit->id }})">
+                                                wire:click="openStatusModal({{ $refund->id }})">
                                                 Pending
                                             </button>
 
@@ -102,32 +90,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="slipModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Deposit Slip</h5>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-                <div class="modal-body text-center">
-
-                    <img id="slipImage"
-                        src=""
-                        class="img-fluid rounded">
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
+ 
     <div class="modal fade"
         id="statusModal"
         tabindex="-1"
@@ -138,7 +101,7 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5>Update Deposit Status</h5>
+                    <h5>Update Refund Status</h5>
 
                     <button
                         type="button"
@@ -151,38 +114,60 @@
 
 
 
-                    @if($selectedDeposit)
+                    @if($selectedRefund)
 
                     <div class="table-responsive mb-3">
                         <table class="table table-bordered">
 
                             <tr>
-                                <th width="35%">Deposit By</th>
+                                <th width="35%">Refund By</th>
                                 <td>
-                                    {{ $selectedDeposit->depositer->id ?? '' }}
+                                    {{ $selectedRefund->member->id ?? '' }}
                                     /
-                                    {{ $selectedDeposit->depositer->name ?? '' }}
+                                    {{ $selectedRefund->member->name ?? '' }}
                                 </td>
                             </tr>
 
                             <tr>
-                                <th>Deposit At</th>
+                                <th>Refund At</th>
                                 <td>
-                                    {{ $selectedDeposit->created_at->format('d M y, h:i A') }}
+                                    {{ $selectedRefund->created_at->format('d M y, h:i A') }}
                                 </td>
                             </tr>
-
+                            <tr>
+                                <th>Charge</th>
+                                <td style="text-align:left">
+                                    {{ number_format($selectedRefund->charge,2) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Pass Day</th>
+                                <td style="text-align:left">
+                                    {{ number_format($selectedRefund->pass_day) }}
+                                </td>
+                            </tr>
+                            
+            
+                              
+        
                             <tr>
                                 <th>Amount</th>
-                                <td style="text-align:right">
-                                    {{ number_format($selectedDeposit->amount,2) }}
+                                <td style="text-align:left">
+                                    {{ number_format($selectedRefund->amount,2) }}
                                 </td>
                             </tr>
 
                             <tr>
-                                <th>Currency</th>
-                                <td>
-                                    {{ $selectedDeposit->account->operator->currency->name ?? '' }}
+                                <th>Deduct</th>
+                                <td style="text-align:left">
+                                    {{ number_format($selectedRefund->deduct,2) }}
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <th>Return</th>
+                                <td style="text-align:left">
+                                    {{ number_format($selectedRefund->return_amount,2) }}
                                 </td>
                             </tr>
 
@@ -199,12 +184,9 @@
                         <option value="">Select Status</option>
 
                         <option value="2">
-                            Accept
+                            Success
                         </option>
-
-                        <option value="3">
-                            Reject
-                        </option>
+ 
 
                     </select>
 

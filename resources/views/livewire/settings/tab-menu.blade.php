@@ -53,7 +53,13 @@
         <li class="nav-item">
             <a class="nav-link {{ $activeTab == 'profile' ? 'active' : '' }}" 
             href="{{ route('profile.index', ['tab' => 'profile']) }}">
-            User Profile
+            Profile
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $activeTab == 'change-password' ? 'active' : '' }}" 
+            href="{{ route('change-password.index', ['tab' => 'change-password']) }}">
+            Change Password
             </a>
         </li>
     </ul>

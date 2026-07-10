@@ -12,6 +12,7 @@ use App\Livewire\Parameter\WalletTransferCrud;
 
 use App\Livewire\Settings\BusinessCrud;
 use App\Livewire\Settings\ProfileCrud;
+use App\Livewire\Settings\ChangePasswordCrud;
 
 use App\Livewire\Clients\ClientsCrud;
 
@@ -19,6 +20,9 @@ use App\Livewire\Settings\GlobalSettingsCrud;
 use App\Livewire\Settings\GenerationCommissionCrud;
 use App\Livewire\Settings\DepositeCommissionCrud;
 use App\Livewire\Settings\InvestmentChargeCrud;
+use App\Livewire\Refund\RefundCrud;
+
+
 
 use App\Livewire\Income\IncomeDailyCrud;
 use App\Livewire\Income\IncomeGenerationCrud;
@@ -49,6 +53,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
     Route::get('/profile', ProfileCrud::class)->name('profile.index');
+    Route::get('/change-password', ChangePasswordCrud::class)->name('change-password.index');
+
+
+
     Route::get('/bussiness', BusinessCrud::class)->name('bussiness.index');
 
     Route::get('/parameter', ParameterCrud::class)->name('parameter.index');
@@ -71,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/clients', ClientsCrud::class)->name('clients.index');
     Route::get('/deposit', DepositCrud::class)->name('deposit.index');
     Route::get('/withdraw', WithdrawCrud::class)->name('withdraw.index');
+    Route::get('/refund', RefundCrud::class)->name('refund.index');
 
  
 

@@ -19,12 +19,13 @@ class User extends Authenticatable
 
  
     protected $fillable = [
-                            'name', 
-                            'address', 
-                            'phone', 
+                            'name',
+                            'address',
+                            'phone',
                             'email',
                             'image',
-                        ]; 
+                            'password',
+                        ];
 
     protected function casts(): array
     {
