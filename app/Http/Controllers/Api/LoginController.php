@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Client;
 use App\Models\SalarySlot;
 use Illuminate\Support\Facades\DB;
+use App\Models\GlobalSettings;
 
 
 class LoginController extends Controller
@@ -74,6 +75,10 @@ class LoginController extends Controller
             ->first();
 
 
+        $global_settings = GlobalSettings::where('id', 1)->first();
+        $deposit_rate = $global_settings->deposit_rate;
+        $withdraw_rate = $global_settings->withdraw_rate;
+
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
@@ -87,6 +92,10 @@ class LoginController extends Controller
                 'income_balance' => $client->income_balance,
                 'deposit_balance' => $client->deposit_balance,
                 'investment_balance' => $client->investment_balance,
+
+
+                'deposit_rate' => $deposit_rate,
+                'withdraw_rate' => $withdraw_rate,
 
                 'left_balance' => $leftBalance['balance'],
                 'right_balance' => $rightBalance['balance'],

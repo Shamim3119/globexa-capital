@@ -21,36 +21,39 @@ class InvestmentController extends Controller
      */
 
 
-public function index(Request $request)
-{
-    $query = Investment::query();
+    public function index(Request $request)
+    {
+        $query = Investment::query();
 
-    if ($request->filled('id')) {
-        $query->where('id', $request->id);
+        if ($request->filled('id')) {
+            $query->where('id', $request->id);
+        }
+
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+
+        $accounts = $query
+            ->with([
+                'commission_info:id,level,day,deposite_commission'
+            ])
+            ->addSelect([
+                'total_income' => IncomeDaily::selectRaw('COALESCE(SUM(amount),0)')
+                    ->whereColumn('income_dailies.client_id', 'investments.client_id')
+                    ->whereColumn('income_dailies.invest_id', 'investments.id'),
+
+                'refund_status' => Refund::select('status_id')
+                    ->whereColumn('refunds.investment_id', 'investments.id')
+                    ->limit(1),
+            ])
+            ->orderByDesc('id')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $accounts
+        ]);
     }
-
-    if ($request->filled('client_id')) {
-        $query->where('client_id', $request->client_id);
-    }
-
-    $accounts = $query
-        ->addSelect([
-            'total_income' => IncomeDaily::selectRaw('COALESCE(SUM(amount),0)')
-                ->whereColumn('income_dailies.client_id', 'investments.client_id')
-                ->whereColumn('income_dailies.invest_id', 'investments.id'),
-
-            'refund_status' => Refund::select('status_id')
-                ->whereColumn('refunds.investment_id', 'investments.id')
-                ->limit(1),
-        ])
-        ->orderBy('id', 'desc')
-        ->get();
-
-    return response()->json([
-        'status' => true,
-        'data' => $accounts
-    ]);
-}
 
     public function upgrade(Request $request)
     {
@@ -164,6 +167,10 @@ public function index(Request $request)
                 $refCommission = ($request->amount * $setting->ref_comm) / 100;
 
                 $refClient = Client::find($client->ref_id);
+
+                $refClient = Client::where('id', $client->ref_id)
+                ->where('inactive', 0)
+                ->first();
 
                 if ($refClient) {
 

@@ -12,6 +12,11 @@ use App\Http\Controllers\Api\InvestmentController;
 use App\Http\Controllers\Api\DepositeCommissionController;
 
 use App\Http\Controllers\Api\RefundController;
+use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\TransferController;
+
+ 
+
  
 use App\Http\Controllers\Api\DepositController;
 use App\Http\Controllers\Api\TeamController;
@@ -41,11 +46,17 @@ Route::post('/client-accounts', [ClientAccountController::class, 'save']);
 
 Route::get('/bank-operators', [BankOperatorController::class, 'index']);
 Route::get('/business-accounts',[BusinessAccountController::class, 'index']);
+Route::get('/business-doc',[BusinessAccountController::class, 'pdf_doc']);
 
 Route::get('/deposits', [DepositController::class, 'index']);
 Route::post('/deposits', [DepositController::class, 'save']);
 
- 
+Route::get('/transfer', [TransferController::class, 'index']);
+Route::post('/transfer', [TransferController::class, 'store']);
+
+
+
+Route::get('/client', [ClientController::class, 'show']);
 
 Route::get('/p2p', [P2PController::class, 'index']);
 Route::post('/p2p', [P2PController::class, 'save']);
@@ -69,6 +80,9 @@ Route::get('/deposite-commissions', [DepositeCommissionController::class, 'index
 
 Route::get('/dashboard-summary', [DashboardController::class, 'dashboardSummary']);
 Route::get('/income-breakdown', [DashboardController::class, 'incomeBreakdown']);
+
+
+
  
 
 /*

@@ -15,7 +15,11 @@ class ClientAccountController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ClientAccount::query();
+        $query = ClientAccount::with([
+            'operator:id,name,type_id,currency_id',
+            'operator.bank_type:id,name',
+            'operator.currency:id,name',
+        ]);
 
         if ($request->filled('id')) {
             $query->where('id', $request->id);
@@ -25,7 +29,10 @@ class ClientAccountController extends Controller
             $query->where('client_id', $request->client_id);
         }
 
-        $accounts = $query->orderBy('id', 'desc')->get();
+        $accounts = $query
+            ->orderByDesc('id')
+            ->get();
+
 
         return response()->json([
             'status' => true,

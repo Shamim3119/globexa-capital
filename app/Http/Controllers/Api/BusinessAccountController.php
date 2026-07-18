@@ -6,9 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Models\BussinessAccount;
 use Illuminate\Support\Facades\DB;
 use App\Models\GlobalSettings;
+use App\Models\Business;
 
 class BusinessAccountController extends Controller
 {
+
+
+    public function pdf_doc()
+    {
+        $business = Business::first();
+
+        if (!$business || !$business->company_doc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Company document not found'
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'company_doc' => asset('storage/'.$business->company_doc)
+            ]
+        ]);
+    }
+
+
     public function index()
     {
         $data = BussinessAccount::query()
@@ -35,10 +58,6 @@ class BusinessAccountController extends Controller
             'deposit_rate' => $globalSetting?->deposit_rate,
             'data' => $data
         ]);
-
-
- 
-
 
     }
 }

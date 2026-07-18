@@ -45,21 +45,38 @@
                             <input type="text" class="form-control" wire:model="ivr_com">
                             @error('ivr_com') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
-   
-                        <div class="mb-3">
-                            <label>Minimum Deposit</label>
-                            <input type="text" class="form-control" wire:model="min_deposit">
-                            @error('min_deposit') <span class="text-danger">{{ $message }}</span> @enderror
-                        </div>
                         <div class="mb-3">
                             <label>Minimum Activation</label>
                             <input type="text" class="form-control" wire:model="min_activation">
                             @error('min_activation') <span class="text-danger">{{ $message }}</span> @enderror      
                         </div>
                         <div class="mb-3">
+                            <label>Minimum Deposit</label>
+                            <input type="text" class="form-control" wire:model="min_deposit">
+                            @error('min_deposit') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
                             <label>Minimum Withdrawal</label>
                             <input type="text" class="form-control" wire:model="min_withdrawal">
                             @error('min_withdrawal') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Minimum P2P</label>
+                            <input type="text" class="form-control" wire:model="min_p2p">
+                            @error('min_p2p') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Minimum Transfer</label>
+                            <input type="text" class="form-control" wire:model="min_transfer">
+                            @error('min_transfer') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Maximum Activation</label>
+                            <input type="text" class="form-control" wire:model="max_activation">
+                            @error('max_activation') <span class="text-danger">{{ $message }}</span> @enderror 
                         </div>
                         <div class="mb-3">
                             <label>Maximum Deposit</label>
@@ -67,14 +84,20 @@
                             @error('max_deposit') <span class="text-danger">{{ $message }}</span> @enderror 
                         </div>
                         <div class="mb-3">
-                            <label>Maximum Activation</label>
-                            <input type="text" class="form-control" wire:model="max_activation">
-                            @error('max_activation') <span class="text-danger">{{ $message }}</span> @enderror 
-                        </div>
-                        <div class="mb-3">
                             <label>Maximum Withdrawal</label>
                             <input type="text" class="form-control" wire:model="max_withdrawal">
                             @error('max_withdrawal') <span class="text-danger">{{ $message }}</span> @enderror  
+                        </div>
+                        <div class="mb-3">
+                            <label>Maximum P2P</label>
+                            <input type="text" class="form-control" wire:model="max_p2p">
+                            @error('max_p2p') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Maximum Transfer</label>
+                            <input type="text" class="form-control" wire:model="max_transfer">
+                            @error('max_transfer') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                     </div>
                     <div class="card-footer">

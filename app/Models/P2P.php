@@ -13,4 +13,15 @@ class P2P extends Model
         'to_id',
         'amount',
     ];
+
+
+    public function sender()
+    {
+        return $this->belongsTo(Client::class, 'from_id');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo(Client::class, 'to_id');
+    }
 }

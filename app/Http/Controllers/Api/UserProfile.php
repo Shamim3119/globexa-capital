@@ -8,6 +8,8 @@ use App\Models\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image; // IMPORTANT
+use App\Models\GlobalSettings;
+
 
 
 class UserProfile extends Controller
@@ -15,6 +17,7 @@ class UserProfile extends Controller
     public $selectedClient = null;
     public $leftCount = 0;
     public $rightCount = 0;
+ 
 
     private function getLegCount($parentId, $site)
     {
@@ -44,6 +47,11 @@ class UserProfile extends Controller
         $this->leftCount = $this->getLegCount($id, 0);
         $this->rightCount = $this->getLegCount($id, 1);
 
+        $global_settings = GlobalSettings::where('id', 1)->first();
+ 
+        $deposit_rate = $global_settings->deposit_rate;
+        $withdraw_rate = $global_settings->withdraw_rate;
+
 
         return response()->json([
             'success' => true,
@@ -52,12 +60,20 @@ class UserProfile extends Controller
                 'phone' => $this->selectedClient->phone,
                 'email' => $this->selectedClient->email,
                 'address' => $this->selectedClient->address,
+                'created_at' => $this->selectedClient->created_at,
 
                 'aLink' => 'https://globexacapital.com/?ref='.$this->selectedClient->left_side,
                 'bLink' => 'https://globexacapital.com/?ref='.$this->selectedClient->left_side,
 
                 'aCount' => $this->leftCount,
                 'bCount' => $this->rightCount,
+
+                'investment_balance' => $this->selectedClient->investment_balance,
+                'deposit_balance' => $this->selectedClient->deposit_balance,
+                'income_balance' => $this->selectedClient->income_balance,
+
+                'deposit_rate' => $deposit_rate,
+                'withdraw_rate' => $withdraw_rate,
             ]
         ]);
     }

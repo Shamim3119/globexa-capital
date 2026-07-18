@@ -102,6 +102,22 @@
               </li>
 
 
+
+            <li class="nav-item">
+                <a href="{{ route('transfer.index') }}" class="nav-link active">
+                    <i class="nav-icon bi bi-arrow-left-right"></i>
+                    <p>Transfer</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('p2p.index') }}" class="nav-link active">
+                    <i class="nav-icon bi bi-people-fill"></i>
+                    <p>P2P</p>
+                </a>
+            </li>
+
+
               <li class="nav-item {{ request()->routeIs('reference.*') || request()->routeIs('daily.*') || request()->routeIs('generation.*') ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link active">
                   <i class="nav-icon bi bi-currency-dollar"></i>
@@ -153,7 +169,7 @@
               </li>
 
 
-              <li class="nav-item {{ request()->routeIs('bussiness.*') || request()->routeIs('profile.*') || request()->routeIs('generation-commission.*') || request()->routeIs('global-settings.*') ? 'menu-open' : '' }}">
+              <li class="nav-item {{ request()->routeIs('change-password.*') || request()->routeIs('salary-slote.*') || request()->routeIs('investment-charge.*') || request()->routeIs('deposite-commission.*') ||  request()->routeIs('rate.*') || request()->routeIs('bussiness.*') || request()->routeIs('profile.*') || request()->routeIs('generation-commission.*') || request()->routeIs('global-settings.*') ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link active">
                   <i class="nav-icon bi bi-boxes"></i>
                   <p>

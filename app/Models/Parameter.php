@@ -9,5 +9,6 @@ class Parameter extends Model
 {
     protected $fillable = ['name', 'inactive', 'tag'];
     protected $table = 'parameters';
-    
+
+
 }

@@ -137,9 +137,11 @@ class RefundController extends Controller
         }
 
         // Prevent duplicate refund
-        $exists = Refund::where('investment_id', $investment->id)->first();
+        $lastRefund = Refund::where('investment_id', $investment->id)
+            ->latest('id')
+            ->first();
 
-        if ($exists) {
+        if ($lastRefund && $lastRefund->status_id != 3) {
             return response()->json([
                 'status' => false,
                 'message' => 'Refund already submitted.'
@@ -167,7 +169,34 @@ class RefundController extends Controller
 
         try {
 
- 
+        $lastRefund = Refund::where('investment_id', $investment->id)
+        ->latest('id')
+        ->first();
+
+        if ($lastRefund) {
+
+            // Latest request is not cancelled
+            if ($lastRefund->status_id != 3) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Refund already submitted.'
+                ], 400);
+            }
+
+            // Latest request was cancelled, reuse it
+            $lastRefund->update([
+                'client_id'      => $investment->client_id,
+                'amount'         => $investment->amount,
+                'charge'         => $chargePercent,
+                'deduct'         => $chargeAmount,
+                'pass_day'       => $daysPassed,
+                'return_amount'  => $returnAmount,
+                'status_id'      => 1, // Pending
+            ]);
+
+        } else {
+
+            // No previous refund request
             Refund::create([
                 'client_id'      => $investment->client_id,
                 'investment_id'  => $investment->id,
@@ -176,8 +205,12 @@ class RefundController extends Controller
                 'deduct'         => $chargeAmount,
                 'pass_day'       => $daysPassed,
                 'return_amount'  => $returnAmount,
-                'status_id'      => 1, // if 1 = Pending
+                'status_id'      => 1, // Pending
             ]);
+
+        }
+ 
+ 
 
             $investment->update([
                 'inactive' => 1,

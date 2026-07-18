@@ -21,8 +21,10 @@ class GlobalSettings extends Model
                             'ivr_com',
                             'inv_charge_level',
 
-               
-
+                            'min_p2p',
+                            'max_p2p',
+                            'min_transfer',
+                            'max_transfer',
                         ];
  
  

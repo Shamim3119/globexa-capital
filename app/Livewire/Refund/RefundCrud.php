@@ -76,6 +76,16 @@ class RefundCrud extends Component
                     $client->save();
                 }
             }
+            else if ($this->selectedStatus == 3) {
+
+                // Update Investment
+                $investment = Investment::find($refund->investment_id);
+
+                if ($investment) {
+                    $investment->inactive = 0;
+                    $investment->save();
+                }
+            }
 
             DB::commit();
 

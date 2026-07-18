@@ -21,5 +21,9 @@ class Investment extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
+        public function commission_info()
+    {
+        return $this->belongsTo(DepositeCommission::class, 'investment_id');
+    }
 }
  

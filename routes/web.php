@@ -22,8 +22,11 @@ use App\Livewire\Settings\DepositeCommissionCrud;
 use App\Livewire\Settings\InvestmentChargeCrud;
 use App\Livewire\Refund\RefundCrud;
 
+use App\Livewire\P2P\P2PCrud;
+use App\Livewire\Transfer\TransferCrud;
 
-
+ 
+ 
 use App\Livewire\Income\IncomeDailyCrud;
 use App\Livewire\Income\IncomeGenerationCrud;
 use App\Livewire\Income\IncomeReferenceCrud;
@@ -80,6 +83,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/deposit', DepositCrud::class)->name('deposit.index');
     Route::get('/withdraw', WithdrawCrud::class)->name('withdraw.index');
     Route::get('/refund', RefundCrud::class)->name('refund.index');
+
+    Route::get('/p2p', P2PCrud::class)->name('p2p.index');
+    Route::get('/transfer', TransferCrud::class)->name('transfer.index');
 
  
 

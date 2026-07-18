@@ -38,7 +38,8 @@
 
 
                         <div class='row'>
-                            <div class='col-8 mt-3'>
+                            <div class='col-8'>
+                                <label class="form-label">Company Logo</label>
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" id="img" wire:model="logo">
                                     <label class="input-group-text" for="img">Upload</label>
@@ -78,6 +79,65 @@
                                 });
                             </script>
                         </div>
+
+                        <div class="row">
+
+                            <div class="col-8">
+
+                                <label class="form-label">Company Document (PDF)</label>
+
+                                <div class="input-group">
+
+                                    <input
+                                        type="file"
+                                        class="form-control"
+                                        wire:model="company_doc"
+                                        accept=".pdf,application/pdf">
+
+                                    <label class="input-group-text">
+                                        Upload
+                                    </label>
+
+                                </div>
+
+                                @error('company_doc')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+
+                            </div>
+
+                            <div class="col-4 d-flex align-items-center justify-content-center">
+
+                                @if($company_doc)
+
+                                    <span class="badge bg-success fs-6">
+                                        PDF Selected
+                                    </span>
+
+                                @elseif($business->company_doc)
+
+                                    <a
+                                        href="{{ asset('storage/'.$business->company_doc) }}"
+                                        target="_blank"
+                                        class="btn btn-outline-primary">
+
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                        View PDF
+
+                                    </a>
+
+                                @else
+
+                                    <span class="text-muted">
+                                        No PDF
+                                    </span>
+
+                                @endif
+
+                            </div>
+
+                        </div>
+
                     </div>
                     <div class="card-footer">
                         <div class="m-3 d-flex justify-content-center">

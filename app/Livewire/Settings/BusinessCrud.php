@@ -5,6 +5,7 @@ namespace App\Livewire\Settings;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Business;
+use Illuminate\Support\Facades\Storage;
 
 class BusinessCrud extends Component
 {
@@ -16,6 +17,8 @@ class BusinessCrud extends Component
 
     public $id, $code, $name, $email, $phone, $address, $web;
     public $logo;
+
+    public $company_doc;
 
     // ✅ Load data once
     public function mount()
@@ -42,12 +45,20 @@ class BusinessCrud extends Component
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'logo' => 'nullable|image|max:1024', // max 1MB
+            'company_doc' => 'nullable|mimes:pdf|max:5120', // 5MB
         ]);
 
         $logoPath = $this->business->logo; // keep old logo
+        $companyDocPath = $this->business->company_doc;
 
         if ($this->logo) {
             $logoPath = $this->logo->store('business', 'public');
+        }
+
+        if ($this->company_doc) {
+            
+            $companyDocPath = $this->company_doc->store('business/docs', 'public');
+
         }
 
         $this->business->update([
@@ -57,6 +68,7 @@ class BusinessCrud extends Component
             'address' => $this->address,
             'web' => $this->web,
             'logo' => $logoPath,
+            'company_doc' => $companyDocPath,
         ]);
 
         // ✅ refresh user data (optional but good)

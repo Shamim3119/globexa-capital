@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\P2P;
+use Illuminate\Support\Facades\DB;
+use App\Models\Client;
 
 class P2PController extends Controller
 {
@@ -14,7 +16,10 @@ class P2PController extends Controller
      */
     public function index(Request $request)
     {
-        $query = P2P::query();
+        $query = P2P::with([
+            'sender:id,name',
+            'receiver:id,name',
+        ]);
 
         if ($request->filled('id')) {
             $query->where('id', $request->id);
@@ -28,7 +33,14 @@ class P2PController extends Controller
             $query->where('to_id', $request->to_id);
         }
 
-        $transfers = $query->orderBy('id', 'desc')->get();
+        if ($request->filled('both_id')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('from_id', $request->both_id)
+                ->orWhere('to_id', $request->both_id);
+            });
+        }
+
+        $transfers = $query->latest()->get();
 
         return response()->json([
             'status' => true,
@@ -49,39 +61,55 @@ class P2PController extends Controller
         ]);
 
         if ($request->filled('id')) {
+            // Your existing update logic...
+        }
 
-            $p2p = P2P::find($request->id);
+        DB::beginTransaction();
 
-            if (!$p2p) {
+        try {
+
+            $sender = Client::lockForUpdate()->find($request->from_id);
+            $receiver = Client::lockForUpdate()->find($request->to_id);
+
+            if ($sender->deposit_balance < $request->amount) {
+
+                DB::rollBack();
+
                 return response()->json([
                     'status' => false,
-                    'message' => 'P2P transfer not found.'
-                ], 404);
+                    'message' => 'Insufficient deposit balance.'
+                ], 400);
             }
 
-            $p2p->update([
+            // Deduct sender balance
+            $sender->decrement('deposit_balance', $request->amount);
+
+            // Add receiver balance
+            $receiver->increment('deposit_balance', $request->amount);
+
+            // Create transfer record
+            $p2p = P2P::create([
                 'from_id' => $request->from_id,
                 'to_id'   => $request->to_id,
                 'amount'  => $request->amount,
             ]);
 
+            DB::commit();
+
             return response()->json([
-                'status' => true,
-                'message' => 'P2P transfer updated successfully.',
-                'data' => $p2p
-            ]);
+                'status'  => true,
+                'message' => 'P2P transfer completed successfully.',
+                'data'    => $p2p
+            ], 201);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        $p2p = P2P::create([
-            'from_id' => $request->from_id,
-            'to_id'   => $request->to_id,
-            'amount'  => $request->amount,
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'P2P transfer created successfully.',
-            'data' => $p2p
-        ], 201);
     }
 }

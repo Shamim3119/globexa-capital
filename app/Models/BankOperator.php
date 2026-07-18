@@ -15,8 +15,10 @@ class BankOperator extends Model
         return $this->belongsTo(Parameter::class, 'type_id');
     }
 
+
     public function currency()
     {
         return $this->belongsTo(Parameter::class, 'currency_id');
     }
+    
 }

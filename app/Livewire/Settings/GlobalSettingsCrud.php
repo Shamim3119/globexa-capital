@@ -11,6 +11,7 @@ class GlobalSettingsCrud extends Component
     public $activeTab = 'global-settings';
     public $ref_comm, $ivr_com, $gen_comm_level, $dep_comm_level, $inv_charge_level; 
     public $min_deposit, $min_activation, $min_withdrawal, $max_deposit, $max_activation, $max_withdrawal; 
+    public $min_p2p, $max_p2p, $min_transfer, $max_transfer;
 
     public function mount()
     {
@@ -27,6 +28,12 @@ class GlobalSettingsCrud extends Component
         $this->max_withdrawal = $this->global_settings->max_withdrawal;
         $this->dep_comm_level = $this->global_settings->dep_comm_level;
         $this->inv_charge_level = $this->global_settings->inv_charge_level;
+
+        $this->min_p2p = $this->global_settings->min_p2p;
+        $this->max_p2p = $this->global_settings->max_p2p;
+        $this->min_transfer = $this->global_settings->min_transfer;
+        $this->max_transfer = $this->global_settings->max_transfer;
+ 
 
         
         $this->ivr_com = $this->global_settings->ivr_com;
@@ -56,7 +63,15 @@ class GlobalSettingsCrud extends Component
             'max_deposit' => 'required|numeric',
             'max_activation' => 'required|numeric',
             'max_withdrawal' => 'required|numeric',
+
+            'min_p2p' => 'required|numeric',
+            'max_p2p' => 'required|numeric',
+            'min_transfer' => 'required|numeric',
+            'max_transfer' => 'required|numeric',
         ]);
+
+
+
 
         $this->global_settings->update([
  
@@ -72,6 +87,11 @@ class GlobalSettingsCrud extends Component
             'inv_charge_level' => $this->inv_charge_level,
             
             'ivr_com' => $this->ivr_com,
+
+            'min_p2p' => $this->min_p2p,
+            'max_p2p' => $this->max_p2p,
+            'min_transfer' => $this->min_transfer,
+            'max_transfer' => $this->max_transfer,
             
             
         ]);
