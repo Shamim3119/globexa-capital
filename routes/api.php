@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\RefundController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\TransferController;
 
+use App\Http\Controllers\Api\IncomeController;
  
 
  
@@ -80,6 +81,8 @@ Route::get('/deposite-commissions', [DepositeCommissionController::class, 'index
 
 Route::get('/dashboard-summary', [DashboardController::class, 'dashboardSummary']);
 Route::get('/income-breakdown', [DashboardController::class, 'incomeBreakdown']);
+
+Route::get('/incomes', [IncomeController::class, 'index']);
 
 
 

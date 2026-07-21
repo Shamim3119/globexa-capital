@@ -63,7 +63,7 @@ class UserProfile extends Controller
                 'created_at' => $this->selectedClient->created_at,
 
                 'aLink' => 'https://globexacapital.com/?ref='.$this->selectedClient->left_side,
-                'bLink' => 'https://globexacapital.com/?ref='.$this->selectedClient->left_side,
+                'bLink' => 'https://globexacapital.com/?ref='.$this->selectedClient->right_side,
 
                 'aCount' => $this->leftCount,
                 'bCount' => $this->rightCount,
@@ -88,7 +88,7 @@ public function updateProfile(Request $request)
         'phone' => 'required|string|max:255',
         'email' => 'required|email',
         'address' => 'nullable|string|max:255',
-        'photo' => 'nullable|image|max:2048',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
     ]);
 
     $client = Client::findOrFail($request->id);
@@ -98,6 +98,19 @@ public function updateProfile(Request $request)
     $client->email = $request->email;
     $client->address = $request->address;
 
+    if ($request->hasFile('photo')) 
+    {
+
+        if ($client->photo && Storage::disk('public')->exists($client->photo)) {
+            Storage::disk('public')->delete($client->photo);
+        }
+
+        $path = $request->file('photo')->store('clients', 'public');
+
+        $client->photo = $path;
+    }
+
+    /*
     if ($request->hasFile('photo')) {
 
         $file = $request->file('photo');
@@ -128,7 +141,7 @@ public function updateProfile(Request $request)
 
         $client->photo = $path;
     }
-
+*/
     $client->save();
 
     return response()->json([
