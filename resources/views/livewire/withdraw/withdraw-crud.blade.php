@@ -8,7 +8,6 @@
     <div class='row'>
         <div class='col-12 col-md-12 col-lg-12'>
 
-
             <div class="card card-primary card-outline mb-4">
                 <div class="card-header">
                     <div class="card-title">{{ ucfirst($activeTab) }} List</div>
@@ -22,13 +21,16 @@
                                 <th style="width:2%">SL</th>
                                 <th>Deposit By</th>
                                 <th style='text-align:center'>Deposit At</th>
-                                <th style='text-align:right'>Amount</th>
-                                <th style='text-align:center'>Currency</th>
                                 <th style='text-align:center'>Slip</th>
-                                <th style='text-align:center'>Trx ID</th>
-                                <th style='text-align:center'>Account</th>
+                                <th style='text-align:left'>TrxID</th>
+                                <th style='text-align:left'>Account Info</th>
               
                                 <th style='text-align:center'>Send At</th>
+                                <th style='text-align:right'>Amount</th>
+                                <th style='text-align:center'>Currency</th>
+                                <th style='text-align:center'>Rate</th>
+                                <th style='text-align:right'>Send Amt.</th>
+
                                 <th style='text-align:center'>Status</th>
                             </tr>
                         </thead>
@@ -38,9 +40,6 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $withdraw->withdrawer->id ?? '' }} / {{ $withdraw->withdrawer->name ?? '' }}</td>
                                     <td style='text-align:center'>{{ $withdraw->created_at->format('d M y, h:i A') }}</td>
-
-                                    <td style='text-align:right'> {{ $withdraw->amount ?? '' }}</td>
-                                    <td style='text-align:center'>{{ $withdraw->account->operator->currency->name ?? '' }}</td>
                                     <td style='text-align:center'>
                                         @if($withdraw->withdraw_doc)
                                             <img src="{{ asset($withdraw->withdraw_doc) }}"
@@ -55,16 +54,21 @@
                                         @endif
                                     </td>
                             
-
-                                    <td style="width:150px; text-align:center; word-break:break-word; white-space:normal;">
+                                    <td style="width:150px; text-align:left; word-break:break-word; white-space:normal;">
                                         {{ $withdraw->trxid ?? '' }}
                                     </td>
                                  
-                                    <td style="width:200px; text-align:center; word-break:break-word; white-space:normal;">
-                                        {{ $withdraw->account->account_no ?? '' }}
+                                    <td style="width:200px; text-align:left; word-break:break-word; white-space:normal;">
+                                        {{ $withdraw->account->account_no ?? '' }} /
+                                        {{ $withdraw->account->operator->name ?? '' }}
                                     </td>
 
                                    <td style='text-align:center'>{{ $withdraw->send_at?->format('d M y, h:i A') ?? '-' }}</td>
+
+                                    <td style='text-align:right'> {{ $withdraw->amount ?? '' }}</td>
+                                    <td style='text-align:center'>{{ $withdraw->account->operator->currency->name ?? '' }}</td>
+                                    <td style='text-align:right'> {{ $withdraw->rate ?? '' }}</td>
+                                    <td style='text-align:center'> {{ $withdraw->send_amount ?? '' }}</td>
 
                                     <td style='text-align:center'>
                                         @php

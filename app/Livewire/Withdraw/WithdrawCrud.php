@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 
+ 
+
 class WithdrawCrud extends Component
 {
     use WithFileUploads;
@@ -23,8 +25,7 @@ class WithdrawCrud extends Component
 
     public $trxid;
     public $withdraw_doc;
-
-
+ 
 
     public function updateStatus()
     {
@@ -34,31 +35,51 @@ class WithdrawCrud extends Component
             'withdraw_doc' => 'nullable|image|max:2048',
         ]);
 
-        $withdraw = Withdraw::findOrFail($this->selectedwithdrawId);
+        DB::transaction(function () {
 
-        if ($this->withdraw_doc) {
+            $withdraw = Withdraw::lockForUpdate()->findOrFail($this->selectedwithdrawId);
 
-            if ($withdraw->withdraw_doc &&
-                Storage::disk('public')->exists($withdraw->withdraw_doc)) {
+            // Keep old status so we don't deduct twice
+            $oldStatus = $withdraw->status_id;
 
-                Storage::disk('public')->delete($withdraw->withdraw_doc);
+            if ($this->withdraw_doc) {
+
+                if ($withdraw->withdraw_doc &&
+                    Storage::disk('public')->exists(str_replace('storage/', '', $withdraw->withdraw_doc))) {
+
+                    Storage::disk('public')->delete(str_replace('storage/', '', $withdraw->withdraw_doc));
+                }
+
+                $path = $this->withdraw_doc->store('withdraws', 'public');
+                $withdraw->withdraw_doc = 'storage/' . $path;
             }
 
-            $path = $this->withdraw_doc->store('withdraws', 'public');
+            $withdraw->trxid = $this->trxid;
+            $withdraw->status_id = $this->selectedStatus;
+            $withdraw->send_at = now();
+            $withdraw->save();
 
-            $withdraw->withdraw_doc = 'storage/'.$path;
-        }
 
-        $withdraw->trxid = $this->trxid;
-        $withdraw->status_id = $this->selectedStatus;
-        $withdraw->send_at = now();
+            if ($oldStatus != 3 && $this->selectedStatus == 3) {
 
-        $withdraw->save();
+                $client = Client::lockForUpdate()->findOrFail($withdraw->withdraw_by);
+
+                $client->increment('income_balance', $withdraw->amount);
+            }
+/*
+            // Deduct only once when changing to Approved (example status_id = 2)
+            if ($oldStatus != 2 && $this->selectedStatus == 2) {
+
+                $client = Client::lockForUpdate()->findOrFail($withdraw->withdraw_by);
+
+                $client->decrement('income_balance', $withdraw->amount);
+            }
+*/
+        });
 
         $this->dispatch('closeStatusModal');
     }
-
-
+ 
     public function openStatusModal($id)
     {
         $this->selectedwithdrawId = $id;
@@ -76,9 +97,6 @@ class WithdrawCrud extends Component
         $this->dispatch('openStatusModal');
     }
 
-
-
- 
 
     public function render()
     {

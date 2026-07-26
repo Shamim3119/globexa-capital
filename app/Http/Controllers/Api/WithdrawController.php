@@ -8,6 +8,10 @@ use App\Models\Withdraw;
 use App\Models\Client;
 use Illuminate\Support\Facades\Mail;
 
+use App\Models\GlobalSettings;
+use App\Models\ClientAccount;
+use Illuminate\Support\Facades\DB;
+
 class WithdrawController extends Controller
 {
     public function index(Request $request)
@@ -75,36 +79,82 @@ class WithdrawController extends Controller
         ]);
     }
 
+
+
     public function save(Request $request)
     {
-      //  \Log::info('Withdraw request', $request->all());
-
         $request->validate([
             'withdraw_by' => 'required|integer',
             'account_id'  => 'required|integer',
-            'amount'      => 'required|numeric',
+            'amount'      => 'required|numeric|min:0.01',
             'otp'         => 'required|string',
         ]);
 
         $client = Client::find($request->withdraw_by);
 
         if (!$client) {
-            return response()->json(['status'=>false,'message'=>'Client not found'],404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Client not found'
+            ], 404);
         }
 
         if ((string)$client->otp !== (string)$request->otp) {
-            return response()->json(['status'=>false,'message'=>'Invalid OTP'],422);
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid OTP'
+            ], 422);
         }
 
+        // Prevent negative balance
+        if ($client->income_balance < $request->amount) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Insufficient income balance.'
+            ], 422);
+        }
+
+        $account = ClientAccount::with('operator.currency')
+            ->findOrFail($request->account_id);
+
+        $settings = GlobalSettings::first();
+
+        $currency = strtoupper(
+            $account->operator->currency->name ?? ''
+        );
+
+        if ($currency == 'USD') {
+            $conversionAmount = $request->amount;
+        } else {
+            $conversionAmount = $request->amount * ($settings->withdraw_rate ?? 1);
+        }
+
+        $conversionRate = ($currency == 'USD')
+        ? 1
+        : ($settings->withdraw_rate ?? 1);
+
+        DB::beginTransaction();
+
         try {
+
             $withdraw = Withdraw::create([
-                'withdraw_by' => $request->withdraw_by,
-                'account_id'  => $request->account_id,
-                'amount'      => $request->amount,
-                'status_id'   => 1,
+                'withdraw_by'       => $request->withdraw_by,
+                'account_id'        => $request->account_id,
+                'amount'            => $request->amount,
+                'rate'        => $conversionRate,
+                'send_amount' => $conversionAmount,
+                'status_id'         => 1,
             ]);
 
-            $client->update(['otp' => null]);
+            // Deduct income balance
+            $client->decrement('income_balance', $request->amount);
+
+            // Clear OTP
+            $client->update([
+                'otp' => null
+            ]);
+
+            DB::commit();
 
             return response()->json([
                 'status' => true,
@@ -113,6 +163,9 @@ class WithdrawController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
+
+            DB::rollBack();
+
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()

@@ -14,6 +14,8 @@ class Withdraw extends Model
         'withdraw_doc', 
         'trxid', 
         'send_at',
+        'send_amount',
+        'rate',
     ];
 
 
@@ -31,7 +33,7 @@ class Withdraw extends Model
 
     public function account()
     {
-        return $this->belongsTo(BussinessAccount::class, 'account_id');
+        return $this->belongsTo(ClientAccount::class, 'account_id');
     }
 
     public function status()

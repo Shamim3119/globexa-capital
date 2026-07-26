@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Models\IncomeDaily;
-use App\Models\IncomeReferences;
+use App\Models\IncomeReference;
 use App\Models\IncomeGeneration;
 use App\Models\IncomeSalaries;
 use App\Models\IncomeIBS;
@@ -15,7 +15,7 @@ class IncomeController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
+         $request->validate([
             'client_id' => 'required',
             'type' => 'required',
             'from_date' => 'required|date',
@@ -29,7 +29,7 @@ class IncomeController extends Controller
                 break;
 
             case 'References Income':
-                $model = IncomeReferences::class;
+                $model = IncomeReference::class;
                 break;
 
             case 'Generation Income':
@@ -52,12 +52,12 @@ class IncomeController extends Controller
         }
 
         $rows = $model::where('client_id',$request->client_id)
-            ->whereDate('create_date','>=',$request->from_date)
-            ->whereDate('create_date','<=',$request->to_date)
-            ->orderBy('create_date')
+            ->whereDate('created_at','>=',$request->from_date)
+            ->whereDate('created_at','<=',$request->to_date)
+            ->orderBy('created_at')
             ->get([
                 'amount',
-                'create_date'
+                'created_at'
             ]);
 
         return response()->json([
