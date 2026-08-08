@@ -36,6 +36,11 @@
                             <input   type="email" class="form-control" wire:model="email">
                             @error('email') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
+                        <div class="mb-3">
+                            <label>Notification Email</label>
+                            <input type="email" class="form-control" wire:model="notification_email">
+                            @error('notification_email') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
 
                         <div class="mb-3">
                             <label>Web</label>

@@ -8,7 +8,8 @@ use App\Models\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WithdrawStatusMail;
  
 
 class WithdrawCrud extends Component
@@ -59,13 +60,29 @@ class WithdrawCrud extends Component
             $withdraw->send_at = now();
             $withdraw->save();
 
+            $client = Client::lockForUpdate()->findOrFail($withdraw->withdraw_by);
 
             if ($oldStatus != 3 && $this->selectedStatus == 3) {
 
-                $client = Client::lockForUpdate()->findOrFail($withdraw->withdraw_by);
-
                 $client->increment('income_balance', $withdraw->amount);
+
+                // Send email only for Approved or Rejected
+                if (
+                    in_array($this->selectedStatus, [2, 3]) &&
+                    !empty($client->email)
+                ) {
+                    Mail::to($client->email)
+                        ->send(
+                            new WithdrawStatusMail(
+                                $withdraw,
+                                $client,
+                                $this->selectedStatus
+                            )
+                        );
+                }
             }
+
+ 
 /*
             // Deduct only once when changing to Approved (example status_id = 2)
             if ($oldStatus != 2 && $this->selectedStatus == 2) {

@@ -56,9 +56,15 @@
                             @error('min_deposit') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
-                            <label>Minimum Withdrawal</label>
+                            <label>Minimum Withdrawal USSD Account</label>
                             <input type="text" class="form-control" wire:model="min_withdrawal">
                             @error('min_withdrawal') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label>Minimum Withdrawal BDT Account</label>
+                            <input type="text" class="form-control" wire:model="min_withdrawal_bdt">
+                            @error('min_withdrawal_bdt') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="mb-3">
@@ -84,9 +90,14 @@
                             @error('max_deposit') <span class="text-danger">{{ $message }}</span> @enderror 
                         </div>
                         <div class="mb-3">
-                            <label>Maximum Withdrawal</label>
+                            <label>Maximum Withdrawal USSD Account</label>
                             <input type="text" class="form-control" wire:model="max_withdrawal">
                             @error('max_withdrawal') <span class="text-danger">{{ $message }}</span> @enderror  
+                        </div>
+                        <div class="mb-3">
+                            <label>Maximum Withdrawal BDT Account</label>
+                            <input type="text" class="form-control" wire:model="max_withdrawal_bdt">
+                            @error('max_withdrawal_bdt') <span class="text-danger">{{ $message }}</span> @enderror  
                         </div>
                         <div class="mb-3">
                             <label>Maximum P2P</label>

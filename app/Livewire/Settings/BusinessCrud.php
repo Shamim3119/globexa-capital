@@ -16,7 +16,7 @@ class BusinessCrud extends Component
     public $activeTab = 'bussiness';
 
     public $id, $code, $name, $email, $phone, $address, $web;
-    public $logo;
+    public $logo, $notification_email;
 
     public $company_doc;
 
@@ -32,6 +32,7 @@ class BusinessCrud extends Component
         $this->phone = $this->business->phone;
         $this->address = $this->business->address;
         $this->web = $this->business->web;
+        $this->notification_email = $this->business->notification_email;
     }
 
     public function edit($id)
@@ -44,6 +45,7 @@ class BusinessCrud extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'notification_email' => 'required|email|max:255',
             'logo' => 'nullable|image|max:1024', // max 1MB
             'company_doc' => 'nullable|mimes:pdf|max:5120', // 5MB
         ]);
@@ -69,6 +71,7 @@ class BusinessCrud extends Component
             'web' => $this->web,
             'logo' => $logoPath,
             'company_doc' => $companyDocPath,
+            'notification_email' => $this->notification_email,
         ]);
 
         // ✅ refresh user data (optional but good)

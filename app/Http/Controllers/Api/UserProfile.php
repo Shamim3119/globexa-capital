@@ -68,9 +68,9 @@ class UserProfile extends Controller
                 'aCount' => $this->leftCount,
                 'bCount' => $this->rightCount,
 
-                'investment_balance' => $this->selectedClient->investment_balance,
-                'deposit_balance' => $this->selectedClient->deposit_balance,
-                'income_balance' => $this->selectedClient->income_balance,
+                'investment_balance' => number_format($this->selectedClient->investment_balance, 2, '.', ''),
+                'deposit_balance'    => number_format($this->selectedClient->deposit_balance, 2, '.', ''),
+                'income_balance'     => number_format($this->selectedClient->income_balance, 2, '.', ''),
 
                 'deposit_rate' => $deposit_rate,
                 'withdraw_rate' => $withdraw_rate,

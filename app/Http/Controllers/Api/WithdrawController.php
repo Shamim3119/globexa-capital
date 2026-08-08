@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\GlobalSettings;
 use App\Models\ClientAccount;
 use Illuminate\Support\Facades\DB;
+use App\Mail\AdminWithdrawNotification;
+use App\Mail\WithdrawOtpMail;
+use App\Models\Business;
+
 
 class WithdrawController extends Controller
 {
@@ -68,10 +72,16 @@ class WithdrawController extends Controller
             'otp' => $otp
         ]);
 
+        Mail::to($client->email)
+            ->send(new WithdrawOtpMail($otp));
+
+            /*
         Mail::raw("Your withdrawal OTP is: {$otp}", function($message) use ($client){
             $message->to($client->email)
                     ->subject('Withdrawal OTP');
         });
+
+        */
 
         return response()->json([
             'status'=>true,
@@ -153,6 +163,23 @@ class WithdrawController extends Controller
             $client->update([
                 'otp' => null
             ]);
+
+            $business = Business::first();
+
+            if (
+                $business &&
+                !empty($business->notification_email)
+            ) {
+                Mail::to($business->notification_email)
+                    ->send(
+                        new AdminWithdrawNotification(
+                            $withdraw,
+                            $client,
+                            $account
+                        )
+                    );
+            }
+
 
             DB::commit();
 

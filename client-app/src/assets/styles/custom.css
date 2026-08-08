@@ -1,0 +1,535 @@
+:root{
+
+    --brand:#003366;
+    --brand-dark:#00264d;
+
+}
+
+body{
+    margin:0;
+    background:#eef3f8;
+    font-family:Inter,sans-serif;
+}
+
+.auth-wrapper{
+    display:flex;
+    min-height:100vh;
+}
+
+.auth-left{
+    width:45%;
+    background:linear-gradient(135deg,#003366,#0b4f94);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:70px;
+}
+
+.brand-logo{
+    width:90px;
+    margin-bottom:20px;
+}
+
+.brand h1{
+    font-size:42px;
+    font-weight:700;
+}
+
+.brand p{
+    opacity:.85;
+    font-size:18px;
+}
+
+.features{
+    margin-top:60px;
+}
+
+.feature{
+    margin-bottom:18px;
+    font-size:18px;
+}
+
+.auth-right{
+    width:55%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+    background:#f8fafc;
+}
+
+.login-card{
+    width:100%;
+    max-width:440px;
+    background:#fff;
+    border-radius:18px;
+    padding:40px;
+    box-shadow:0 20px 60px rgba(0,0,0,.08);
+}
+
+.form-control{
+    height:50px;
+}
+
+.btn-primary{
+    background:#003366;
+    border-color:#003366;
+}
+
+.btn-primary:hover{
+    background:#00264d;
+    border-color:#00264d;
+}
+
+.form-control:focus{
+    border-color:#003366;
+    box-shadow:0 0 0 .2rem rgba(0,51,102,.15);
+}
+
+@media(max-width:992px){
+
+.auth-left{
+    display:none;
+}
+
+.auth-right{
+    width:100%;
+}
+
+}
+
+
+/* Dark mode improvements */
+
+[data-bs-theme="dark"] .navbar-brand-text {
+    color: #ffffff;
+}
+
+ 
+
+
+[data-bs-theme="dark"] .page {
+    background-color: var(--tblr-bg-surface);
+}
+
+
+.navbar-brand-text {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.card{
+    transition:.25s ease;
+}
+
+.card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 1rem 2rem rgba(0,0,0,.08);
+
+}
+
+/* End Dark mode improvements */
+
+
+
+
+
+/* =================================
+   FINAL SIDEBAR OVERRIDE
+================================= */
+
+
+.page{
+    display:flex;
+}
+
+
+/* Sidebar */
+
+.page > .navbar-vertical{
+
+    flex:none;
+
+    width:260px !important;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    height:100vh;
+
+    overflow-y:auto;
+
+    transition:width .25s ease;
+
+}
+
+
+/* Collapsed */
+
+.page.sidebar-collapsed > .navbar-vertical{
+
+    width:80px !important;
+
+}
+
+
+/* Main */
+
+.page-wrapper{
+
+    margin-left:260px !important;
+
+    width:calc(100% - 260px) !important;
+
+}
+
+
+
+.page.sidebar-collapsed .page-wrapper{
+
+    margin-left:80px !important;
+
+    width:calc(100% - 80px) !important;
+
+}
+
+
+
+/* Remove container restriction */
+
+.page-wrapper .container-xl{
+
+    max-width:none !important;
+
+    width:100% !important;
+
+}
+
+
+
+/* Header */
+
+.page-wrapper > .navbar{
+
+    width:100%;
+
+}
+
+
+
+@media(max-width:991px){
+
+    .page > .navbar-vertical{
+
+        width:260px !important;
+
+    }
+
+
+    .page > .navbar-vertical.collapsed{
+
+        width:260px !important;
+
+    }
+
+
+    .page > .navbar-vertical.collapsed .nav-link-title,
+    .page > .navbar-vertical.collapsed .navbar-brand-text{
+
+        display:block;
+
+    }
+
+
+    .page > .navbar-vertical.collapsed .nav-link{
+
+        justify-content:flex-start;
+
+    }
+
+
+    .page > .navbar-vertical.collapsed .nav-link-icon{
+
+        margin-right:12px;
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+/* Mobile */
+
+
+/* ==========================================
+   MOBILE SIDEBAR
+========================================== */
+
+.sidebar-overlay{
+    display:none;
+}
+
+@media (max-width:991px){
+
+    /* Overlay */
+
+    .sidebar-overlay{
+        display:block;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.45);
+        z-index:1045;
+    }
+
+    /* Sidebar */
+
+    .page > .navbar-vertical{
+
+        position:fixed;
+        top:0;
+        left:-260px;
+
+        width:260px !important;
+        height:100vh;
+
+        margin:0 !important;
+        padding:0 !important;
+
+        overflow-y:auto;
+        overflow-x:hidden;
+
+        z-index:1050;
+
+        transition:left .25s ease;
+
+        display:flex;
+        flex-direction:column;
+        align-items:stretch !important;
+
+    }
+
+    .page > .navbar-vertical.mobile-open{
+
+        left:0;
+
+    }
+
+    /* Never use collapsed width on mobile */
+
+    .page > .navbar-vertical.collapsed{
+
+        width:260px !important;
+
+    }
+
+    /* Main page */
+
+    .page-wrapper,
+    .page.sidebar-collapsed .page-wrapper{
+
+        margin-left:0 !important;
+        width:100% !important;
+
+    }
+
+    /* Container */
+
+    .page > .navbar-vertical .container-fluid{
+
+        display:flex;
+        flex-direction:column;
+
+        height:100%;
+
+        padding:0 !important;
+
+    }
+
+    /* Logo */
+
+    .page > .navbar-vertical .navbar-brand{
+
+        display:flex;
+
+        align-items:center;
+
+        min-height:64px;
+
+        padding:20px;
+
+    }
+
+    /* Menu wrapper */
+
+    .page > .navbar-vertical .navbar-collapse{
+
+        display:flex !important;
+
+        flex-direction:column;
+
+        flex:1;
+
+        width:100%;
+
+        overflow-y:auto;
+
+    }
+
+    /* UL */
+
+    .page > .navbar-vertical .navbar-nav{
+
+        display:flex;
+
+        flex-direction:column;
+
+        width:100%;
+
+        margin:0;
+
+        padding:0;
+
+    }
+
+    /* LI */
+
+    .page > .navbar-vertical .nav-item{
+
+        width:100%;
+
+    }
+
+    /* Links */
+
+    .page > .navbar-vertical .nav-link{
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:flex-start !important;
+
+        width:100%;
+
+        padding:14px 20px !important;
+
+        margin:0;
+
+        text-align:left;
+
+    }
+
+    /* Icon */
+
+    .page > .navbar-vertical .nav-link-icon{
+
+        width:24px;
+
+        min-width:24px;
+
+        margin-right:14px !important;
+
+        display:flex;
+
+        justify-content:center;
+
+        align-items:center;
+
+    }
+
+    /* Text */
+
+    .page > .navbar-vertical .nav-link-title{
+
+        display:block !important;
+
+        flex:1;
+
+        white-space:nowrap;
+
+    }
+
+    /* Logout */
+
+    .page > .navbar-vertical .mt-auto{
+
+        padding:20px !important;
+
+    }
+
+
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Force header hamburger visible */
+.page-wrapper .navbar-toggler {
+
+    display:flex !important;
+
+    align-items:center;
+    justify-content:center;
+
+    width:42px;
+    height:42px;
+
+    margin-right:15px;
+
+}
+
+
+/* Desktop + Mobile */
+.navbar-toggler {
+
+    display:flex !important;
+
+}
+
+
+/* Fix full width header */
+
+.page-wrapper .navbar .container-xl,
+.page-wrapper .navbar .container-fluid{
+
+    width:100%;
+
+    max-width:none;
+
+    padding-left:20px;
+
+    padding-right:20px;
+
+}
+
+
+
+/* Fix page body extra gap */
+
+.page-body .container-xl{
+
+    max-width:none;
+
+    width:100%;
+
+}

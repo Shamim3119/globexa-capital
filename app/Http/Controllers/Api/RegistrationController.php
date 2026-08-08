@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\EmailVerificationOtp;
+use App\Mail\RegistrationSuccessMail;
+ 
+
 
 class RegistrationController extends Controller
 {
@@ -88,12 +92,14 @@ class RegistrationController extends Controller
  
             $email = $request->email; // store it first
 
+            Mail::to($email)->send(new EmailVerificationOtp($otp));
+
+            /*
             Mail::raw("Your OTP is: $otp", function ($message) use ($email) {
                 $message->to($email)
                         ->subject('Verification Code');
             });
- 
-
+ */
 
             return response()->json([
                 'success' => true,
@@ -147,6 +153,7 @@ class RegistrationController extends Controller
                 'right_side' => base_convert($client->id, 10, 36) . 'R',
             ]);
 
+            Mail::to($client->email)->send(new RegistrationSuccessMail($client));
 
             $msg  = ""; 
             $msg .= "<div class='mb-3'>";

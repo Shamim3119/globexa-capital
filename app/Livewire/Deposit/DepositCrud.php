@@ -6,6 +6,8 @@ use Livewire\Component;
 use App\Models\Deposit;
 use App\Models\Client;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DepositStatusMail;
 
 class DepositCrud extends Component
 {
@@ -57,16 +59,33 @@ class DepositCrud extends Component
             $deposit->accept_at = now();
             $deposit->save();
 
-            // If Accepted
-            if ($this->selectedStatus == 2) {
+            $client = Client::find($deposit->deposit_by);
 
-                $client = Client::find($deposit->deposit_by);
+    
 
-                if ($client) {
-                    $client->deposit_balance += $deposit->amount;
-                    $client->save();
+                // If Accepted
+                if ($this->selectedStatus == 2) {
+
+                    $client = Client::find($deposit->deposit_by);
+
+                    if ($client) {
+                        $client->deposit_balance += $deposit->amount;
+                        $client->save();
+                    }
+                        // Send notification email for both Approved and Rejected
+                    if (!empty($client->email)) {
+
+                        Mail::to($client->email)
+                            ->send(
+                                new DepositStatusMail(
+                                    $deposit,
+                                    $client,
+                                    $this->selectedStatus
+                                )
+                            );
+                    }
                 }
-            }
+          
 
             DB::commit();
 

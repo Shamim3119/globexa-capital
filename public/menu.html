@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Sidebar with Icons and Collapsed Mini State</title>
+  <style>
+    /* --- Base Variables & Reset --- */
+    :root {
+      --header-height: 60px;
+      --sidebar-width: 240px;
+      --sidebar-collapsed-width: 70px;
+      --primary-color: #2196F3;
+      --dark-bg: #111;
+      --light-bg: #f1f1f1;
+      --text-color: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text-color);
+      background-color: #fff;
+    }
+
+    /* --- Sidebar Layout (Desktop Default: Full Height Top-to-Bottom) --- */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: var(--dark-bg);
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: width 0.3s ease, left 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: #818181;
+      padding: 15px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      border-bottom: 1px solid #222;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .sidebar a .icon {
+      font-size: 20px;
+      min-width: 30px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .sidebar a .link-text {
+      margin-left: 10px;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      color: #f1f1f1;
+      background-color: #222;
+    }
+
+    .sidebar .close-btn {
+      display: none;
+    }
+
+    /* --- Header Layout (Desktop Default) --- */
+    header {
+      position: fixed;
+      top: 0;
+      left: var(--sidebar-width);
+      width: calc(100% - var(--sidebar-width));
+      height: var(--header-height);
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: left 0.3s ease, width 0.3s ease;
+    }
+
+    .menu-btn {
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-right: 15px;
+      display: inline-block;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* --- Main Content Area --- */
+    main {
+      margin-top: var(--header-height);
+      margin-left: var(--sidebar-width);
+      padding: 30px;
+      min-height: calc(100vh - var(--header-height));
+      transition: margin-left 0.3s ease;
+    }
+
+    /* --- Desktop Collapsed State (Mini Sidebar with Icons) --- */
+    body.sidebar-collapsed .sidebar {
+      width: var(--sidebar-collapsed-width);
+    }
+
+    body.sidebar-collapsed .sidebar a .link-text {
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      display: none;
+    }
+
+    body.sidebar-collapsed header {
+      left: var(--sidebar-collapsed-width);
+      width: calc(100% - var(--sidebar-collapsed-width));
+    }
+
+    body.sidebar-collapsed main {
+      margin-left: var(--sidebar-collapsed-width);
+    }
+
+    /* --- Mobile Overlay Back-drop --- */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 998;
+    }
+
+    /* --- Responsive Media Query (Break at 768px) --- */
+    @media screen and (max-width: 768px) {
+      .sidebar {
+        top: 0;
+        height: 100vh;
+        width: var(--sidebar-width) !important;
+        left: calc(-1 * var(--sidebar-width));
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        z-index: 1001;
+      }
+
+      /* Mobile Open State triggered via JS (.open class) */
+      .sidebar.open {
+        left: 0 !important; 
+      }
+
+      .sidebar a .link-text {
+        opacity: 1 !important;
+        display: inline-block !important;
+        width: auto !important;
+      }
+
+      .sidebar .close-btn {
+        display: flex;
+        background-color: #222;
+        color: #ff4a4a;
+        font-weight: bold;
+        justify-content: flex-end;
+      }
+
+      header {
+        left: 0 !important;
+        width: 100% !important;
+      }
+
+      main {
+        margin-left: 0 !important;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Header -->
+  <header>
+    <button class="menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">&#9776;</button>
+    <div class="header-title">W3Schools Custom Template</div>
+  </header>
+
+  <!-- Dimmed Background Overlay for Mobile App Experience -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Left Sidebar Component -->
+  <nav class="sidebar" id="mySidebar">
+    <!-- Mobile Close row -->
+    <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">
+      <span class="icon">&times;</span>
+      <span class="link-text">Close</span>
+    </a>
+    
+    <!-- Navigation Links with Icons -->
+    <a href="#dashboard" class="active">
+      <span class="icon">&#128202;</span>
+      <span class="link-text">Dashboard</span>
+    </a>
+    <a href="#tutorials">
+      <span class="icon">&#128218;</span>
+      <span class="link-text">Tutorials</span>
+    </a>
+    <a href="#references">
+      <span class="icon">&#128196;</span>
+      <span class="link-text">References</span>
+    </a>
+    <a href="#exercises">
+      <span class="icon">&#9999;</span>
+      <span class="link-text">Exercises</span>
+    </a>
+    <a href="#settings">
+      <span class="icon">&#9881;</span>
+      <span class="link-text">Settings</span>
+    </a>
+  </nav>
+
+  <!-- Page Main Text Body Content -->
+  <main>
+    <h1>Responsive Web Layout with Mini Sidebar</h1>
+    <br>
+    <p>This layout supports a mini desktop sidebar state:</p>
+    <br>
+    <ul>
+      <li><strong>On Desktop:</strong> Clicking the header toggle shrinks the sidebar down to a thin vertical bar displaying only icons. The header and main container dynamically adjust to fill the remaining space.</li>
+      <li><strong>On Mobile/Tablet:</strong> The sidebar continues to retract completely off-screen, sliding open via the menu button.</li>
+    </ul>
+  </main>
+
+  <!-- Logic Layer -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("mySidebar");
+      const overlay = document.getElementById("sidebarOverlay");
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("active");
+      } else {
+        document.body.classList.toggle("sidebar-collapsed");
+      }
+    }
+  </script>
+
+</body>
+</html>

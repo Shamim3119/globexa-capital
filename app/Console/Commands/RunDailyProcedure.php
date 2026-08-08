@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 #[Signature('app:run-daily-procedure')]
-#[Description('Command description')]
+#[Description('Command to run daily procedure')]
 
 class RunDailyProcedure extends Command
 {

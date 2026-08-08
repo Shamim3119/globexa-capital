@@ -1,0 +1,290 @@
+:root {
+    --gc-primary: #003366;
+    --gc-primary-hover: #00264d;
+    --gc-light: #f6f8fb;
+}
+
+body {
+    background: var(--gc-light);
+    font-family: Inter, sans-serif;
+}
+
+/* Logo */
+.brand-text {
+    color: var(--gc-primary);
+    font-weight: 700;
+}
+
+/* Card */
+.card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 51, 102, 0.08);
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: var(--gc-primary);
+    border-color: var(--gc-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--gc-primary-hover);
+    border-color: var(--gc-primary-hover);
+}
+
+/* Links */
+a {
+    color: var(--gc-primary);
+}
+
+a:hover {
+    color: var(--gc-primary-hover);
+}
+
+/* Inputs */
+.form-control:focus {
+    border-color: var(--gc-primary);
+    box-shadow: 0 0 0 .2rem rgba(0, 51, 102, .15);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sidebar-custom {
+
+    width:260px !important;
+
+    height:100vh;
+
+    background:#003366;
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+    display:block !important;
+
+}
+
+
+.sidebar-custom .container-fluid {
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    height:100%;
+
+    padding:20px 15px;
+
+}
+
+
+.sidebar-logo {
+
+    color:white;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:30px;
+
+    width:100%;
+
+}
+
+
+.sidebar-custom .navbar-nav {
+
+    display:flex;
+
+    flex-direction:column;
+
+    width:100%;
+
+    align-items:flex-start;
+
+}
+
+
+.sidebar-custom .nav-link {
+
+    display:flex !important;
+
+    flex-direction:row;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    width:100%;
+
+    color:white;
+
+    padding:12px 15px;
+
+    border-radius:8px;
+
+    margin-bottom:5px;
+
+}
+
+
+.sidebar-custom .nav-link:hover {
+
+    background:rgba(255,255,255,.15);
+
+}
+
+
+.sidebar-custom .active-menu {
+
+    background:rgba(255,255,255,.2);
+
+}
+
+
+.logout-btn {
+
+    margin-top:auto;
+
+    border:none;
+
+    background:none;
+
+}
+
+
+
+
+ 
+
+
+.page {
+
+    display:flex;
+
+}
+
+
+.page-wrapper {
+
+    margin-left:200px;
+
+    width:calc(100% - 200px);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width:991px){
+
+
+    .sidebar-custom {
+
+        width:70px !important;
+
+    }
+
+
+    .sidebar-logo {
+
+        display:none;
+
+    }
+
+
+    .sidebar-custom .nav-link span {
+
+        display:none;
+
+    }
+
+
+    .sidebar-custom .nav-link {
+
+        justify-content:center;
+
+        padding:12px 0;
+
+    }
+
+
+    .page-wrapper {
+
+        margin-left:70px;
+
+        width:calc(100% - 70px);
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Override Tabler vertical navbar */
+
+.sidebar-custom.navbar-vertical {
+
+    align-items:flex-start !important;
+
+}
+
+
+.sidebar-custom .container-fluid {
+
+    justify-content:flex-start !important;
+
+    align-items:flex-start !important;
+
+}
+
+
+.sidebar-custom .navbar-nav {
+
+    justify-content:flex-start !important;
+
+}
+
+
+.sidebar-custom .nav-link {
+
+    justify-content:flex-start !important;
+
+}

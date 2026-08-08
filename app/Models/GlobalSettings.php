@@ -25,6 +25,8 @@ class GlobalSettings extends Model
                             'max_p2p',
                             'min_transfer',
                             'max_transfer',
+                            'min_withdrawal_bdt',
+                            'max_withdrawal_bdt'
                         ];
  
  
