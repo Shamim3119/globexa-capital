@@ -5,7 +5,14 @@ import {
     IconArrowDownCircle,
     IconUsers,
     IconUser,
+    IconUserCircle,
     IconLogout,
+    IconArrowsExchange,
+    IconWallet,
+    IconReceiptRefund,
+    IconTransfer,
+    IconFileDescription,
+    IconLock,
 } from "@tabler/icons-react";
 
 import { NavLink } from "react-router-dom";
@@ -23,91 +30,193 @@ export default function Sidebar() {
         closeMobileSidebar,
     } = useSidebar();
 
+
     const menuGroups = [
+
+        // =========================
+        // DASHBOARD
+        // =========================
 
         {
             title: null,
+
             items: [
+
                 {
                     name: "Dashboard",
                     icon: IconDashboard,
                     path: "/dashboard",
                 },
+
             ],
         },
 
+
+        // =========================
+        // TRANSACTIONS
+        // =========================
+
         {
             title: "Transactions",
+
             items: [
+
                 {
                     name: "Deposit",
                     icon: IconCash,
                     path: "/deposit",
                 },
+
                 {
                     name: "Investment",
                     icon: IconChartLine,
                     path: "/investment",
                 },
+
                 {
                     name: "Withdraw",
                     icon: IconArrowDownCircle,
                     path: "/withdraw",
                 },
+
+                {
+                    name: "Transfer",
+                    icon: IconTransfer,
+                    path: "/transfer",
+                },
+
+                {
+                    name: "P2P",
+                    icon: IconArrowsExchange,
+                    path: "/p2p",
+                },
+
+                {
+                    name: "Refund",
+                    icon: IconReceiptRefund,
+                    path: "/refund",
+                },
+
             ],
         },
+
+
+        // =========================
+        // INCOME
+        // =========================
+
+        {
+            title: "Report",
+
+            items: [
+
+                {
+                    name: "Incomes",
+                    icon: IconWallet,
+                    path: "/incomes",
+                },
+
+            ],
+        },
+
+
+        // =========================
+        // NETWORK
+        // =========================
 
         {
             title: "Network",
+
             items: [
+
                 {
-                    name: "Team",
+                    name: "My Team",
                     icon: IconUsers,
                     path: "/team",
                 },
+
             ],
         },
 
+
+        // =========================
+        // ACCOUNT
+        // =========================
+
         {
             title: "Account",
+
             items: [
+
+                {
+                    name: "My Account",
+                    icon: IconUserCircle,
+                    path: "/account",
+                },
+
                 {
                     name: "Profile",
                     icon: IconUser,
                     path: "/profile",
                 },
+
+            ],
+        },
+
+
+        // =========================
+        // COMPANY
+        // =========================
+
+        {
+            title: "Company",
+
+            items: [
+
+                {
+                    name: "Documents",
+                    icon: IconFileDescription,
+                    path: "/company-documents",
+                },
+
             ],
         },
 
     ];
 
 
-
     return (
 
         <aside
             className={`
-            navbar
-            navbar-vertical
-            navbar-expand-lg
-            ${collapsed ? "collapsed" : ""}
-            ${mobileOpen ? "mobile-open" : ""}
+                navbar
+                navbar-vertical
+                navbar-expand-lg
+                ${collapsed ? "collapsed" : ""}
+                ${mobileOpen ? "mobile-open" : ""}
             `}
         >
 
             <div className="container-fluid h-100 d-flex flex-column">
 
-                {/* Logo */}
+
+                {/* =========================
+                    LOGO
+                ========================= */}
 
                 <div className="navbar-brand">
 
                     {
                         collapsed && window.innerWidth >= 992
+
                             ?
+
                             <span className="fw-bold fs-3">
                                 G
                             </span>
+
                             :
+
                             <span className="navbar-brand-text">
                                 Globexa Capital
                             </span>
@@ -116,8 +225,9 @@ export default function Sidebar() {
                 </div>
 
 
-
-                {/* Menu */}
+                {/* =========================
+                    MENU
+                ========================= */}
 
                 <div className="navbar-collapse flex-column flex-grow-1 overflow-auto">
 
@@ -131,8 +241,12 @@ export default function Sidebar() {
                                     className="w-100"
                                 >
 
+
+                                    {/* GROUP TITLE */}
+
                                     {
-                                        group.title && (!collapsed || window.innerWidth < 992) &&
+                                        group.title &&
+                                        (!collapsed || window.innerWidth < 992) &&
 
                                         <li className="nav-item mt-3">
 
@@ -143,13 +257,16 @@ export default function Sidebar() {
                                             </span>
 
                                         </li>
-
                                     }
+
+
+                                    {/* GROUP ITEMS */}
 
                                     {
                                         group.items.map((item) => {
 
                                             const Icon = item.icon;
+
 
                                             return (
 
@@ -159,12 +276,13 @@ export default function Sidebar() {
                                                 >
 
                                                     <NavLink
-
                                                         to={item.path}
 
                                                         onClick={() => {
 
-                                                            if (window.innerWidth < 992) {
+                                                            if (
+                                                                window.innerWidth < 992
+                                                            ) {
 
                                                                 closeMobileSidebar();
 
@@ -175,14 +293,14 @@ export default function Sidebar() {
                                                         className={({ isActive }) =>
 
                                                             isActive
-
                                                                 ? "nav-link active"
-
                                                                 : "nav-link"
 
                                                         }
-
                                                     >
+
+
+                                                        {/* ICON */}
 
                                                         <span className="nav-link-icon">
 
@@ -190,12 +308,22 @@ export default function Sidebar() {
 
                                                         </span>
 
+
+                                                        {/* TITLE */}
+
                                                         {
-                                                            (!collapsed || window.innerWidth < 992) &&
+                                                            (
+                                                                !collapsed ||
+                                                                window.innerWidth < 992
+                                                            ) &&
+
                                                             <span className="nav-link-title">
+
                                                                 {item.name}
+
                                                             </span>
                                                         }
+
 
                                                     </NavLink>
 
@@ -204,13 +332,11 @@ export default function Sidebar() {
                                             );
 
                                         })
-
                                     }
 
                                 </div>
 
                             ))
-
                         }
 
                     </ul>
@@ -218,17 +344,15 @@ export default function Sidebar() {
                 </div>
 
 
-
-                {/* Logout */}
+                {/* =========================
+                    LOGOUT
+                ========================= */}
 
                 <div className="mt-auto p-3">
 
                     <button
-
                         onClick={logout}
-
                         className="btn btn-danger w-100"
-
                     >
 
                         <IconLogout
@@ -237,17 +361,21 @@ export default function Sidebar() {
                         />
 
                         {
-                            (!collapsed || window.innerWidth < 992) && "Logout"
+                            (
+                                !collapsed ||
+                                window.innerWidth < 992
+                            ) && "Logout"
                         }
 
                     </button>
 
                 </div>
 
+
             </div>
 
         </aside>
 
     );
-
 }
+

@@ -533,3 +533,821 @@ body{
     width:100%;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   STEP 7 — WELCOME CARD
+========================================== */
+
+.welcome-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border:0;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #003366 0%,
+            #064d8f 55%,
+            #0b5fa5 100%
+        );
+
+    color:#ffffff;
+
+    box-shadow:
+        0 10px 30px rgba(0,51,102,.15);
+
+}
+
+
+/* Decorative circle */
+
+.welcome-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+
+    height:220px;
+
+    right:-80px;
+
+    top:-100px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+
+}
+
+
+/* Another decorative circle */
+
+.welcome-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:140px;
+
+    height:140px;
+
+    right:100px;
+
+    bottom:-100px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.05);
+
+}
+
+
+/* Body */
+
+.welcome-card-body{
+
+    position:relative;
+
+    z-index:1;
+
+    padding:28px 30px;
+
+}
+
+
+/* Small label */
+
+.welcome-label{
+
+    font-size:13px;
+
+    font-weight:500;
+
+    opacity:.75;
+
+    margin-bottom:4px;
+
+}
+
+
+/* Name */
+
+.welcome-title{
+
+    margin:0;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#ffffff;
+
+}
+
+
+/* Information */
+
+.welcome-info{
+
+    display:flex;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+    margin-top:12px;
+
+    font-size:14px;
+
+    color:rgba(255,255,255,.85);
+
+}
+
+
+/* Salary */
+
+.welcome-salary{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+}
+
+
+/* Crown */
+
+.welcome-salary svg{
+
+    color:#ffd54a;
+
+}
+
+
+/* Divider */
+
+.welcome-divider{
+
+    opacity:.5;
+
+}
+
+
+/* Avatar */
+
+.welcome-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.welcome-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media(max-width:575px){
+
+    .welcome-card-body{
+
+        padding:22px 20px;
+
+    }
+
+
+    .welcome-title{
+
+        font-size:22px;
+
+    }
+
+
+    .welcome-info{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:6px;
+
+    }
+
+
+    .welcome-divider{
+
+        display:none;
+
+    }
+
+
+    .welcome-avatar{
+
+        width:52px;
+
+        height:52px;
+
+        font-size:21px;
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   STEP 9 — TEAM BUSINESS
+========================================== */
+
+.team-business-card {
+
+    border: 0;
+
+    border-radius: 14px;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.team-business-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08);
+
+}
+
+
+.team-business-value {
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+}
+
+
+.team-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    background: rgba(0,51,102,.08);
+
+    color: #003366;
+
+}
+
+
+.team-business-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 18px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid var(--tblr-border-color);
+
+    color: var(--tblr-secondary);
+
+    font-size: 13px;
+
+}
+
+
+@media(max-width:575px){
+
+    .team-business-value {
+
+        font-size: 23px;
+
+    }
+
+
+    .team-icon {
+
+        width: 44px;
+
+        height: 44px;
+
+    }
+
+}
+
+
+/* ==========================================
+   STEP 9 — TEAM BUSINESS END
+========================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+/* ==========================================
+   QUICK ACTIONS
+========================================== */
+
+.quick-actions-card {
+    border: 0;
+    border-radius: 14px;
+}
+
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 78px;
+
+    padding: 14px;
+
+    border: 1px solid var(--tblr-border-color);
+    border-radius: 12px;
+
+    background: var(--tblr-bg-surface);
+
+    text-decoration: none;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+
+.quick-action:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, .07);
+}
+
+
+/* Icon */
+
+.quick-action-icon {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+}
+
+
+/* Content */
+
+.quick-action-content {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+
+.quick-action-title {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: var(--tblr-body-color);
+
+    line-height: 1.3;
+}
+
+
+.quick-action-description {
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    color: var(--tblr-secondary);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* ==========================================
+   ICON COLORS
+========================================== */
+
+.quick-action-blue .quick-action-icon {
+    background: rgba(0, 51, 102, .10);
+    color: #003366;
+}
+
+
+.quick-action-green .quick-action-icon {
+    background: rgba(47, 179, 68, .10);
+    color: #2fb344;
+}
+
+
+.quick-action-yellow .quick-action-icon {
+    background: rgba(245, 159, 0, .12);
+    color: #f59f00;
+}
+
+
+.quick-action-purple .quick-action-icon {
+    background: rgba(174, 62, 201, .10);
+    color: #ae3ec9;
+}
+
+
+.quick-action-indigo .quick-action-icon {
+    background: rgba(66, 99, 235, .10);
+    color: #4263eb;
+}
+
+
+.quick-action-cyan .quick-action-icon {
+    background: rgba(21, 170, 191, .10);
+    color: #15aabf;
+}
+
+
+.quick-action-teal .quick-action-icon {
+    background: rgba(32, 201, 151, .10);
+    color: #20c997;
+}
+
+
+.quick-action-orange .quick-action-icon {
+    background: rgba(253, 126, 20, .10);
+    color: #fd7e14;
+}
+
+
+.quick-action-pink .quick-action-icon {
+    background: rgba(214, 51, 132, .10);
+    color: #d63384;
+}
+
+
+.quick-action-brown .quick-action-icon {
+    background: rgba(121, 85, 72, .10);
+    color: #795548;
+}
+
+
+.quick-action-red .quick-action-icon {
+    background: rgba(214, 57, 57, .10);
+    color: #d63939;
+}
+
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 991px) {
+
+    .quick-action {
+        min-height: 72px;
+    }
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 575px) {
+
+    .quick-actions-card .card-body {
+        padding: 16px;
+    }
+
+
+    .quick-action {
+        min-height: 64px;
+        padding: 10px 12px;
+    }
+
+
+    .quick-action-icon {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+    }
+
+
+    .quick-action-title {
+        font-size: 13px;
+    }
+
+
+    .quick-action-description {
+        font-size: 10px;
+    }
+
+}
+
+
+/* ==========================================
+   STEP 10 — END QUICK ACTIONS
+========================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   STEP 11 — DASHBOARD STATISTICS
+========================================== */
+
+.dashboard-stat-card {
+
+    border: 0;
+
+    border-radius: 14px;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.dashboard-stat-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08);
+
+}
+
+
+.dashboard-stat-value {
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+}
+
+
+.dashboard-stat-label {
+
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    color: var(--tblr-secondary);
+
+}
+
+
+.dashboard-stat-icon {
+
+    width: 48px;
+
+    min-width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+}
+
+
+/* Deposit */
+
+.stat-deposit .dashboard-stat-icon {
+
+    background: rgba(0, 51, 102, .10);
+
+    color: #003366;
+
+}
+
+
+/* Investment */
+
+.stat-investment .dashboard-stat-icon {
+
+    background: rgba(47, 179, 68, .10);
+
+    color: #2fb344;
+
+}
+
+
+/* Income */
+
+.stat-income .dashboard-stat-icon {
+
+    background: rgba(245, 159, 0, .12);
+
+    color: #f59f00;
+
+}
+
+
+/* Withdraw */
+
+.stat-withdraw .dashboard-stat-icon {
+
+    background: rgba(214, 57, 57, .10);
+
+    color: #d63939;
+
+}
+
+
+/* Footer */
+
+.dashboard-stat-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid var(--tblr-border-color);
+
+    font-size: 12px;
+
+    color: var(--tblr-secondary);
+
+}
+
+
+.dashboard-stat-footer strong {
+
+    color: var(--tblr-body-color);
+
+    font-weight: 600;
+
+}
+
+
+/* Mobile */
+
+@media(max-width:575px){
+
+    .dashboard-stat-value {
+
+        font-size: 22px;
+
+    }
+
+
+    .dashboard-stat-icon {
+
+        width: 42px;
+
+        min-width: 42px;
+
+        height: 42px;
+
+    }
+
+}
+
+
+
+
+
+
+
+/* ==========================================
+   DASHBOARD REFRESH
+========================================== */
+
+.dashboard-refresh-spin {
+
+    animation: dashboardRefreshSpin 1s linear infinite;
+
+}
+
+
+@keyframes dashboardRefreshSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}

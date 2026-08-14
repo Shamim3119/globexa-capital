@@ -1,89 +1,120 @@
 import {
-    IconUsers
+    IconUsers,
+    IconArrowLeft,
+    IconArrowRight,
 } from "@tabler/icons-react";
 
 
-export default function TeamCard({user}){
-
+export default function TeamCard({ user }) {
 
     return (
 
-        <div className="row">
+        <div className="row g-3">
 
+            {/* Left Team */}
 
-            <div className="col-md-6">
+            <div className="col-12 col-md-6">
 
-
-                <div className="card">
-
+                <div className="card team-business-card h-100">
 
                     <div className="card-body">
 
+                        <div className="d-flex align-items-center justify-content-between">
 
-                        <IconUsers size={30}/>
+                            <div>
+
+                                <div className="text-secondary mb-1">
+                                    Left Team Business
+                                </div>
+
+                                <div className="team-business-value">
+
+                                    ৳ {Number(
+                                        user?.left_balance || 0
+                                    ).toFixed(2)}
+
+                                </div>
+
+                            </div>
 
 
-                        <h1>
+                            <span className="avatar team-icon">
 
-                            ৳ {user?.left_balance}
+                                <IconArrowLeft size={22} />
 
-                        </h1>
-
-
-                        <div className="text-secondary">
-
-                            Left Team Business
+                            </span>
 
                         </div>
 
 
+                        <div className="team-business-footer">
+
+                            <IconUsers size={16} />
+
+                            <span>
+                                Left Team
+                            </span>
+
+                        </div>
+
                     </div>
 
-
                 </div>
-
 
             </div>
 
 
+            {/* Right Team */}
 
+            <div className="col-12 col-md-6">
 
-
-            <div className="col-md-6">
-
-
-                <div className="card">
-
+                <div className="card team-business-card h-100">
 
                     <div className="card-body">
 
+                        <div className="d-flex align-items-center justify-content-between">
 
-                        <IconUsers size={30}/>
+                            <div>
+
+                                <div className="text-secondary mb-1">
+                                    Right Team Business
+                                </div>
+
+                                <div className="team-business-value">
+
+                                    ৳ {Number(
+                                        user?.right_balance || 0
+                                    ).toFixed(2)}
+
+                                </div>
+
+                            </div>
 
 
-                        <h1>
+                            <span className="avatar team-icon">
 
-                            ৳ {user?.right_balance}
+                                <IconArrowRight size={22} />
 
-                        </h1>
-
-
-                        <div className="text-secondary">
-
-                            Right Team Business
+                            </span>
 
                         </div>
 
 
-                    </div>
+                        <div className="team-business-footer">
 
+                            <IconUsers size={16} />
+
+                            <span>
+                                Right Team
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-
             </div>
-
-
 
         </div>
 

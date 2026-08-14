@@ -50,7 +50,7 @@ export default function NotificationDropdown() {
 
                 <IconBell size={20}/>
 
-                <span className="badge bg-red badge-notification">
+                <span className="badge bg-red text-white badge-notification">
                     {notifications.length}
                 </span>
 

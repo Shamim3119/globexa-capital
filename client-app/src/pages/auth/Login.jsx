@@ -229,28 +229,31 @@ export default function Login() {
                 </div>
 
 
+                <div className="d-flex justify-content-between align-items-center mb-4">
 
-                <label className="form-check mb-4">
+                    <label className="form-check mb-0">
 
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                        />
 
-                    <input
+                        <span className="form-check-label">
+                            Remember me
+                        </span>
 
-                        className="form-check-input"
-
-                        type="checkbox"
-
-                    />
-
-
-                    <span className="form-check-label">
-
-                        Remember me
-
-                    </span>
+                    </label>
 
 
-                </label>
+                    <button
+                        type="button"
+                        className="btn btn-link p-0"
+                        onClick={() => navigate("/forgot-password")}
+                    >
+                        Forgot Password?
+                    </button>
 
+                </div>
 
 
                 <button

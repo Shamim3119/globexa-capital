@@ -15,7 +15,13 @@ import Investment from "../pages/investment/Investment";
 import Withdraw from "../pages/withdraw/Withdraw";
 import Team from "../pages/team/Team";
 import Profile from "../pages/profile/Profile";
-
+import Transfer from "../pages/transfer/Transfer";
+import P2P from "../pages/p2p/P2P";
+import Refund from "../pages/refund/Refund";
+import Account from "../pages/account/Account";
+import Incomes from "../pages/incomes/Incomes";
+import CompanyDocuments from "../pages/company-documents/CompanyDocuments";
+import ForgotPassword from "../pages/auth/ForgotPassword";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -41,6 +47,11 @@ export default function AppRoutes(){
 
                     element={<Login />}
 
+                />
+
+                <Route
+                    path="/forgot-password"
+                    element={<ForgotPassword />}
                 />
 
 
@@ -122,6 +133,38 @@ export default function AppRoutes(){
 
                     />
 
+                    <Route 
+                        path="/transfer" 
+                        element={<Transfer />} 
+                    />
+
+                    <Route 
+                        path="/p2p" 
+                        element={<P2P />} 
+                    />
+                    
+                    <Route
+                        path="/refund"
+                        element={<Refund />}
+                    />
+ 
+
+                    <Route
+                        path="/account"
+                        element={<Account />}
+                    />
+
+                    <Route
+                        path="/incomes"
+                        element={<Incomes />}
+                    />  
+
+                    <Route
+                        path="/company-documents"
+                        element={<CompanyDocuments />}
+                    />
+
+                    
 
                 </Route>
 
@@ -136,103 +179,4 @@ export default function AppRoutes(){
 }
 
 
-
-
-{/*
-
-import {
-    BrowserRouter,
-    Routes,
-    Route
-} from "react-router-dom";
-
-
-import Login from "../pages/auth/Login";
-
-import Dashboard from "../pages/dashboard/Dashboard";
-
-import Deposit from "../pages/deposit/Deposit";
-import Investment from "../pages/investment/Investment";
-import Withdraw from "../pages/withdraw/Withdraw";
-import Team from "../pages/team/Team";
-import Profile from "../pages/profile/Profile";
-
-
-import DashboardLayout from "../layouts/DashboardLayout";
-
-import ProtectedRoute from "./ProtectedRoute";
-
-
-export default function AppRoutes(){
-
-    return (
-
-        <BrowserRouter basename="/client">
-
-            <Routes>
-
  
-                <Route
-                    path="/"
-                    element={<Login />}
-                />
-
-
- 
-                <Route
-
-                    element={
-                        <ProtectedRoute>
-                            <DashboardLayout />
-                        </ProtectedRoute>
-                    }
-
-                >
-
-                    <Route
-                        path="/dashboard"
-                        element={<Dashboard />}
-                    />
-
-
-                    <Route
-                        path="/deposit"
-                        element={<Deposit />}
-                    />
-
-
-                    <Route
-                        path="/investment"
-                        element={<Investment />}
-                    />
-
-
-                    <Route
-                        path="/withdraw"
-                        element={<Withdraw />}
-                    />
-
-
-                    <Route
-                        path="/team"
-                        element={<Team />}
-                    />
-
-
-                    <Route
-                        path="/profile"
-                        element={<Profile />}
-                    />
-
-                </Route>
-
-
-            </Routes>
-
-        </BrowserRouter>
-
-    );
-}
-
-
-*/}

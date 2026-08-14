@@ -81,33 +81,9 @@ export default function UserDropdown() {
 
                 </Link>
 
-                <Link
-                    to="/change-password"
-                    className="dropdown-item"
-                >
+ 
 
-                    <IconLock
-                        size={18}
-                        className="me-2"
-                    />
-
-                    Change Password
-
-                </Link>
-
-                <Link
-                    to="/settings"
-                    className="dropdown-item"
-                >
-
-                    <IconSettings
-                        size={18}
-                        className="me-2"
-                    />
-
-                    Settings
-
-                </Link>
+ 
 
                 <div className="dropdown-divider"></div>
 

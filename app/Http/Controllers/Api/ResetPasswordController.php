@@ -5,180 +5,176 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Client;
-
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-
+use App\Mail\ResetPasswordOtpMail;
 
 class ResetPasswordController extends Controller
 {
-
- 
+    /**
+     * Send OTP for password reset
+     */
     public function checkID(Request $request)
     {
- 
-    	$userid = $request->input('userid');
-    
-        if($userid != null)
-        {
-            $client = Client::find($userid);
+        $request->validate([
+            'userid' => 'required|integer',
+        ]);
 
-            if (!$client) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
-            }
+        $userid = $request->userid;
 
-            try {
- 
-                $otp = random_int(100000, 999999);
-    
-    			$email = $client->email; 
-            
-                Mail::raw("Your OTP is: $otp", function ($message) use ($email) {
-                    $message->to($email)
-                            ->subject('Verification Code');
-                });
+        $client = Client::find($userid);
 
-                $client->update([
-                    'otp' => $otp,
-                ]);
-    
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Valid User ID',
-                    'userid' => $userid,
-                    'email' => $email,
-                ], 200);
-
-
-            } catch (\Exception $e) {
-
-                    return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
-            }
-
-        }else{
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
+        if (!$client) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid User ID'
+            ], 400);
         }
- 
+
+        if (empty($client->email)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email address not found for this account.'
+            ], 400);
+        }
+
+        try {
+
+            // Generate 6 digit OTP
+            $otp = random_int(100000, 999999);
+
+            // Save OTP
+            $client->update([
+                'otp' => $otp,
+            ]);
+
+            // Send OTP email
+            Mail::to($client->email)
+                ->send(new ResetPasswordOtpMail($otp));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP sent successfully.',
+                'userid' => $userid,
+                'email' => $client->email,
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to send OTP. Please try again.'
+            ], 500);
+        }
     }
 
+
+    /**
+     * Verify OTP
+     */
     public function checkOtp(Request $request)
     {
-        
-        $userid = $request->input('userid');
-        $otp = $request->input('otp');
-    
-        if($userid != null && $otp != null)
-        {
-            $client = Client::find($userid);
+        $request->validate([
+            'userid' => 'required|integer',
+            'otp' => 'required|string',
+        ]);
 
-            if (!$client) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
-            }
+        $userid = $request->userid;
+        $otp = $request->otp;
 
-            try {
- 
-                if($otp !=  $client->otp)
-                {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Invalid OTP Code.'
-                    ], 400);
-                }
-    
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Valid User ID',
-                    'userid' => $userid,
-                    'otp' => $otp,
-                ], 200);
+        $client = Client::find($userid);
 
-
-            } catch (\Exception $e) {
-
-                    return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
-            }
-
-        }else{
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
+        if (!$client) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid User ID'
+            ], 400);
         }
- 
+
+        if (empty($client->otp)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'OTP not found. Please request a new OTP.'
+            ], 400);
+        }
+
+        if ((string) $otp !== (string) $client->otp) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid OTP Code.'
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'OTP verified successfully.',
+            'userid' => $userid,
+            'otp' => $otp,
+        ], 200);
     }
 
+
+    /**
+     * Reset password
+     */
     public function reset(Request $request)
     {
-        $userid = $request->input('userid');
-      	$otp = $request->input('otp');
-        $password = $request->input('password');
-    
-        if($userid != null && $password != null  && $otp != null)
-        {
-            $client = Client::find($userid);
+        $request->validate([
+            'userid' => 'required|integer',
+            'otp' => 'required|string',
+            'password' => 'required|string|min:6',
+        ]);
 
-            if (!$client) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
-            }
+        $userid = $request->userid;
+        $otp = $request->otp;
+        $password = $request->password;
 
-            try {
- 
-                if($otp !=  $client->otp)
-                {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Invalid OTP Code.'
-                    ], 400);
-                }
-            
-            
-                $client->update([
-                    'password' => Hash::make($password),
-                ]);
-    
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Password reset has been successfull',
-                ], 200);
+        $client = Client::find($userid);
 
-
-            } catch (\Exception $e) {
-
-                    return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
-            }
-
-        }else{
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid User ID'
-                ], 400);
+        if (!$client) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid User ID'
+            ], 400);
         }
- 
-    }
 
- 
- 
+        if (empty($client->otp)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'OTP not found. Please request a new OTP.'
+            ], 400);
+        }
+
+        // Verify OTP
+        if ((string) $otp !== (string) $client->otp) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid OTP Code.'
+            ], 400);
+        }
+
+        try {
+
+            // Update password
+            $client->update([
+                'password' => Hash::make($password),
+
+                // Clear OTP after successful password reset
+                'otp' => null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset has been successful.'
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to reset password. Please try again.'
+            ], 500);
+        }
+    }
 }
+

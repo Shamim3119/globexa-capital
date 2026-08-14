@@ -1,74 +1,106 @@
 import {
-    IconCrown
+    IconCrown,
 } from "@tabler/icons-react";
 
+export default function WelcomeCard({ user }) {
 
-export default function WelcomeCard({user}){
+    const firstLetter =
+        user?.name?.charAt(0)?.toUpperCase() || "U";
+
+
+    const avatar = user?.photo
+        ? `${import.meta.env.VITE_API_URL.replace(
+              "/api",
+              ""
+          )}/storage/${user.photo}`
+        : null;
 
 
     return (
 
-        <div className="card bg-primary text-white">
+        <div className="welcome-card">
 
-            <div className="card-body">
+            <div className="welcome-card-body">
 
+                <div className="row align-items-center g-3">
 
-                <div className="row align-items-center">
-
+                    {/* Left */}
 
                     <div className="col">
 
+                        <div className="welcome-label">
+                            Welcome back
+                        </div>
 
-                        <h2 className="mb-1">
-
-                            Welcome,
-                            {" "}
-                            {user?.name}
-
+                        <h2 className="welcome-title">
+                            {user?.name || "User"}
                         </h2>
 
 
-                        <div>
+                        <div className="welcome-info">
 
-                            Rank:
-                            {" "}
-                            {user?.designation}
+                            <span className="welcome-rank">
+
+                                Rank:
+                                {" "}
+
+                                <strong>
+                                    {user?.designation || "Member"}
+                                </strong>
+
+                            </span>
+
+
+                            <span className="welcome-divider">
+                                •
+                            </span>
+
+
+                            <span className="welcome-salary">
+
+                                <IconCrown size={17} />
+
+                                Salary:
+                                {" "}
+
+                                <strong>
+                                    ৳ {user?.salary_amount || "0.00"}
+                                </strong>
+
+                            </span>
 
                         </div>
-
-
-                        <div className="mt-2">
-
-                            <IconCrown size={18}/>
-
-                            Salary:
-                            {" "}
-                            ৳ {user?.salary_amount}
-
-                        </div>
-
 
                     </div>
 
+
+                    {/* Right */}
 
                     <div className="col-auto">
 
+                        <div className="welcome-avatar">
 
-                        <span className="avatar avatar-xl">
+                            {avatar ? (
 
-                            {
-                                user?.name
-                                ?.charAt(0)
-                            }
+                                <img
+                                    src={avatar}
+                                    alt={
+                                        user?.name ||
+                                        "User"
+                                    }
+                                />
 
-                        </span>
+                            ) : (
 
+                                firstLetter
+
+                            )}
+
+                        </div>
 
                     </div>
 
-
                 </div>
-
 
             </div>
 

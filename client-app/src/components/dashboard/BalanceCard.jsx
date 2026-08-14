@@ -8,7 +8,7 @@ export default function BalanceCard({
 
     return (
 
-        <div className="col-md-4">
+        <div className="col-md-4 mt-2">
 
 
             <div className="card">

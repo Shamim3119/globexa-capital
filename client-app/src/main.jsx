@@ -21,35 +21,57 @@ import {
     DashboardProvider
 } from "./context/DashboardContext";
 
-import { SidebarProvider } from "./context/SidebarContext";
+import {
+    DepositProvider
+} from "./context/DepositContext";
+
+import { 
+    InvestmentProvider 
+} from "./context/InvestmentContext";
+
+import { 
+    WithdrawProvider 
+} from "./context/WithdrawContext.jsx";
+
+import { TeamProvider } from "./context/TeamContext";
+import { TransferProvider } from "./context/TransferContext";
+import { P2PProvider } from "./context/P2PContext";
+import { RefundProvider } from "./context/RefundContext";
+import { AccountProvider } from "./context/AccountContext";
+import { IncomeProvider } from "./context/IncomeContext";
  
+import { SidebarProvider } from "./context/SidebarContext.jsx";
 
-createRoot(document.getElementById('root')).render(
-
-<StrictMode>
-
-    <ThemeProvider>
-
-        <AuthProvider>
-
-            <SidebarProvider>
-
-                <DashboardProvider>
-
+createRoot(document.getElementById("root")).render(
+    <StrictMode>
+        <ThemeProvider>
+            <AuthProvider>
+                <SidebarProvider>
                     <ToastProvider>
-
-                        <App />
-
+                        <DashboardProvider>
+                            <DepositProvider>
+                                <InvestmentProvider>
+                                    <WithdrawProvider>
+                                        <TeamProvider>
+                                            <TransferProvider>
+                                                 <P2PProvider>
+                                                    <RefundProvider>
+                                                        <AccountProvider>
+                                                            <IncomeProvider>
+                                                                <App />
+                                                            </IncomeProvider>
+                                                        </AccountProvider>
+                                                    </RefundProvider>
+                                                 </P2PProvider>
+                                            </TransferProvider>
+                                        </TeamProvider>
+                                    </WithdrawProvider>
+                                </InvestmentProvider>
+                            </DepositProvider>
+                        </DashboardProvider>
                     </ToastProvider>
-
-                </DashboardProvider>
-
-            </SidebarProvider>
-
-        </AuthProvider>
-
-    </ThemeProvider>
-
-</StrictMode>
-
-)
+                </SidebarProvider>
+            </AuthProvider>
+        </ThemeProvider>
+    </StrictMode>
+);

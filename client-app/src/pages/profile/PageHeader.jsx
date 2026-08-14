@@ -6,12 +6,6 @@ export default function PageHeader() {
 
         <div className="mb-4">
 
-            <div className="page-pretitle">
-
-                Dashboard
-
-            </div>
-
             <h2 className="page-title">
 
                 Profile
