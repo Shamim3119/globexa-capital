@@ -6,6 +6,7 @@ import {
     IconUser,
     IconArrowRight,
     IconLoader2,
+    IconArrowLeft,
 } from "@tabler/icons-react";
 
 import AuthLayout from "../../layouts/AuthLayout";
@@ -294,6 +295,15 @@ export default function Login() {
 
                 </button>
 
+                <div className="text-center mt-3">
+                    <a
+                        href="https://globexacapital.com"
+                        className="text-decoration-none"
+                    >
+                        <IconArrowLeft size={18} className="me-1" />
+                        Back to Website
+                    </a>
+                </div>
 
 
             </form>

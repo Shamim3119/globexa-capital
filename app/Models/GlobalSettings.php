@@ -29,6 +29,6 @@ class GlobalSettings extends Model
                             'max_withdrawal_bdt'
                         ];
  
- 
+     
 
 }

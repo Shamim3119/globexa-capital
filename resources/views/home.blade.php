@@ -80,6 +80,7 @@ echo  $id = base_convert(str_replace(['L','R'], '', $value), 36, 10);
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
+      <a id="get-started-btn" class="btn-getstarted" href="https://client.globexacapital.com">Login</a>
       <a id="get-started-btn" class="btn-getstarted" href="#registration">Registration</a>
 
     </div>

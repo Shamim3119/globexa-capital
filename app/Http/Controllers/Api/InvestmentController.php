@@ -99,10 +99,41 @@ class InvestmentController extends Controller
             $client = Client::find($request->client_id);
 
             if (!$client) {
+                DB::rollBack();
                 return response()->json([
                     'status' => false,
                     'message' => 'Client not found.'
                 ], 404);
+            }
+
+            // =====================================================
+            // Create Investment
+            // =====================================================
+
+            $setting = GlobalSettings::first();
+
+            if (!$setting) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Global settings not found.'
+                ], 500);
+            }
+
+            // =====================================================
+            // Minimum Activation Restriction
+            // =====================================================
+
+            if ($request->amount < $setting->min_activation) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Minimum activation amount is ' . $setting->min_activation . '.'
+                ], 422);
             }
 
             // Update Investment
@@ -111,6 +142,7 @@ class InvestmentController extends Controller
                 $investment = Investment::find($request->id);
 
                 if (!$investment) {
+                    DB::rollBack();
                     return response()->json([
                         'status' => false,
                         'message' => 'Investment not found.'
@@ -160,13 +192,10 @@ class InvestmentController extends Controller
             $client->inactive = 0;
             $client->save();
 
-            $setting = GlobalSettings::first();
-
-            if ($setting && $setting->ref_comm > 0 && $client->ref_id) {
+            if ($setting->ref_comm > 0 && $client->ref_id) {
 
                 $refCommission = ($request->amount * $setting->ref_comm) / 100;
 
-                $refClient = Client::find($client->ref_id);
 
                 $refClient = Client::where('id', $client->ref_id)
                 ->where('inactive', 0)

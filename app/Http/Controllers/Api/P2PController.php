@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\P2P;
 use Illuminate\Support\Facades\DB;
 use App\Models\Client;
+use App\Models\GlobalSettings;
 
 class P2PController extends Controller
 {
@@ -60,16 +61,72 @@ class P2PController extends Controller
             'amount'  => 'required|numeric|min:0.01',
         ]);
 
-        if ($request->filled('id')) {
-            // Your existing update logic...
+        // =====================================================
+        // Global Settings
+        // =====================================================
+
+        $setting = GlobalSettings::first();
+
+        if (!$setting) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Global settings not found.'
+            ], 500);
         }
+
+        // =====================================================
+        // Minimum P2P Restriction
+        // =====================================================
+
+        if ($request->amount < $setting->min_p2p) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Minimum P2P transfer amount is ' . $setting->min_p2p . '.'
+            ], 422);
+        }
+
+        // =====================================================
+        // Maximum P2P Restriction
+        // =====================================================
+
+        if ($request->amount > $setting->max_p2p) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Maximum P2P transfer amount is ' . $setting->max_p2p . '.'
+            ], 422);
+        }
+
+        // =====================================================
+        // Transaction
+        // =====================================================
 
         DB::beginTransaction();
 
         try {
 
-            $sender = Client::lockForUpdate()->find($request->from_id);
-            $receiver = Client::lockForUpdate()->find($request->to_id);
+            $sender = Client::lockForUpdate()
+                ->find($request->from_id);
+
+            $receiver = Client::lockForUpdate()
+                ->find($request->to_id);
+
+            // Check sender and receiver BEFORE using them
+            if (!$sender || !$receiver) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Sender or receiver not found.'
+                ], 404);
+            }
+
+            // =====================================================
+            // Check Sender Balance
+            // =====================================================
 
             if ($sender->deposit_balance < $request->amount) {
 
@@ -78,16 +135,31 @@ class P2PController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Insufficient deposit balance.'
-                ], 400);
+                ], 422);
             }
 
-            // Deduct sender balance
-            $sender->decrement('deposit_balance', $request->amount);
+            // =====================================================
+            // Deduct Sender Balance
+            // =====================================================
 
-            // Add receiver balance
-            $receiver->increment('deposit_balance', $request->amount);
+            $sender->decrement(
+                'deposit_balance',
+                $request->amount
+            );
 
-            // Create transfer record
+            // =====================================================
+            // Add Receiver Balance
+            // =====================================================
+
+            $receiver->increment(
+                'deposit_balance',
+                $request->amount
+            );
+
+            // =====================================================
+            // Create Transfer Record
+            // =====================================================
+
             $p2p = P2P::create([
                 'from_id' => $request->from_id,
                 'to_id'   => $request->to_id,

@@ -89,8 +89,6 @@ class WithdrawController extends Controller
         ]);
     }
 
-
-
     public function save(Request $request)
     {
         $request->validate([
@@ -100,66 +98,71 @@ class WithdrawController extends Controller
             'otp'         => 'required|string',
         ]);
 
-        $client = Client::find($request->withdraw_by);
-
-        if (!$client) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Client not found'
-            ], 404);
-        }
-
-        if ((string)$client->otp !== (string)$request->otp) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid OTP'
-            ], 422);
-        }
-
-        // Prevent negative balance
-        if ($client->income_balance < $request->amount) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Insufficient income balance.'
-            ], 422);
-        }
-
-        $account = ClientAccount::with('operator.currency')
-            ->findOrFail($request->account_id);
-
-        $settings = GlobalSettings::first();
-
-        $currency = strtoupper(
-            $account->operator->currency->name ?? ''
-        );
-
-        if ($currency == 'USD') {
-            $conversionAmount = $request->amount;
-        } else {
-            $conversionAmount = $request->amount * ($settings->withdraw_rate ?? 1);
-        }
-
-        $conversionRate = ($currency == 'USD')
-        ? 1
-        : ($settings->withdraw_rate ?? 1);
-
+        // Start a database transaction and lock the client row for update
         DB::beginTransaction();
 
         try {
+            // lockForUpdate() prevents other concurrent requests from reading 
+            // or modifying this client record until this transaction commits/rolls back.
+            $client = Client::where('id', $request->withdraw_by)->lockForUpdate()->first();
+
+            if (!$client) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Client not found'
+                ], 404);
+            }
+
+            if ((string)$client->otp !== (string)$request->otp) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid OTP'
+                ], 422);
+            }
+
+            // Prevent negative balance (Now safely protected by the row lock)
+            if ($client->income_balance < $request->amount) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Insufficient income balance.'
+                ], 422);
+            }
+
+            $account = ClientAccount::with('operator.currency')
+                ->findOrFail($request->account_id);
+
+            $settings = GlobalSettings::first();
+
+            $currency = strtoupper(
+                $account->operator->currency->name ?? ''
+            );
+
+            if ($currency == 'USD') {
+                $conversionAmount = $request->amount;
+            } else {
+                $conversionAmount = $request->amount * ($settings->withdraw_rate ?? 1);
+            }
+
+            $conversionRate = ($currency == 'USD')
+            ? 1
+            : ($settings->withdraw_rate ?? 1);
 
             $withdraw = Withdraw::create([
                 'withdraw_by'       => $request->withdraw_by,
                 'account_id'        => $request->account_id,
                 'amount'            => $request->amount,
-                'rate'        => $conversionRate,
-                'send_amount' => $conversionAmount,
+                'rate'              => $conversionRate,
+                'send_amount'       => $conversionAmount,
                 'status_id'         => 1,
             ]);
 
             // Deduct income balance
             $client->decrement('income_balance', $request->amount);
 
-            // Clear OTP
+            // Clear OTP (Also invalidates the OTP so it can't be reused)
             $client->update([
                 'otp' => null
             ]);
@@ -180,7 +183,6 @@ class WithdrawController extends Controller
                     );
             }
 
-
             DB::commit();
 
             return response()->json([
@@ -190,7 +192,6 @@ class WithdrawController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-
             DB::rollBack();
 
             return response()->json([
@@ -199,4 +200,6 @@ class WithdrawController extends Controller
             ], 500);
         }
     }
+
+ 
 }
