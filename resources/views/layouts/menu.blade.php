@@ -1,24 +1,25 @@
 <div class="sidebar-wrapper">
 
         <nav class="mt-2">
-                <!--begin::Sidebar Menu-->
-                <ul
+              <!--begin::Sidebar Menu-->
+              <ul
                 class="nav sidebar-menu flex-column"
                 data-lte-toggle="treeview"
                 role="navigation"
                 aria-label="Main navigation"
                 data-accordion="false"
                 id="navigation"
-                >
-                <li class="nav-item">
-                  <a href="{{ route('dashboard') }}" class="nav-link active">
-                          <i class="nav-icon bi bi-speedometer"></i>
-                          <p>Dashboard</p>
-                  </a>
-                </li>
+              >
+
+              <li class="nav-item">
+                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-speedometer"></i>
+                        <p>Dashboard</p>
+                </a>
+              </li>
 
               <li class="nav-item {{ request()->routeIs('parameter.*') ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link active">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-bricks"></i>
                   <p>
                     Parameters
@@ -73,53 +74,51 @@
                 </ul>
               </li>
 
-                <li class="nav-item">
-                  <a href="{{ route('clients.index') }}" class="nav-link active">
-                  <i class="nav-icon bi bi-universal-access"></i>
-                          <p>Clients</p>
-                  </a>
-                </li>
+              <li class="nav-item">
+                <a href="{{ route('clients.index') }}" class="nav-link {{ request()->routeIs('clients*') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-universal-access"></i>
+                  <p>Clients</p>
+                </a>
+              </li>
 
-                <li class="nav-item">
-                  <a href="{{ route('deposit.index') }}" class="nav-link active">
-                  <i class="nav-icon bi bi-plus-circle"></i>
-                          <p>Deposit</p>
-                  </a>
-                </li>
+              <li class="nav-item">
+                <a href="{{ route('deposit.index') }}" class="nav-link {{ request()->routeIs('deposit*') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-plus-circle"></i>
+                    <p>Deposit</p>
+                </a>
+              </li>
 
-                <li class="nav-item">
-                  <a href="{{ route('withdraw.index') }}" class="nav-link active">
-                  <i class="nav-icon bi bi-dash-circle"></i>
-                          <p>Withdraw</p>
-                  </a>
-                </li>
+              <li class="nav-item">
+                <a href="{{ route('withdraw.index') }}" class="nav-link {{ request()->routeIs('withdraw*') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-dash-circle"></i>
+                  <p>Withdraw</p>
+                </a>
+              </li>
 
-                <li class="nav-item">
-                <a href="{{ route('refund.index') }}" class="nav-link active">
-                    <i class="nav-icon bi bi-arrow-counterclockwise"></i>
+              <li class="nav-item">
+                <a href="{{ route('refund.index') }}" class="nav-link {{ request()->routeIs('refund*') ? 'active' : '' }}">
+                  <i class="nav-icon bi bi-arrow-counterclockwise"></i>
                     <p>Refund</p>
                 </a>
               </li>
 
+              <li class="nav-item">
+                  <a href="{{ route('transfer.index') }}" class="nav-link {{ request()->routeIs('transfer*') ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-arrow-left-right"></i>
+                      <p>Transfer</p>
+                  </a>
+              </li>
 
-
-            <li class="nav-item">
-                <a href="{{ route('transfer.index') }}" class="nav-link active">
-                    <i class="nav-icon bi bi-arrow-left-right"></i>
-                    <p>Transfer</p>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="{{ route('p2p.index') }}" class="nav-link active">
-                    <i class="nav-icon bi bi-people-fill"></i>
-                    <p>P2P</p>
-                </a>
-            </li>
+              <li class="nav-item">
+                  <a href="{{ route('p2p.index') }}" class="nav-link {{ request()->routeIs('p2p*') ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-people-fill"></i>
+                      <p>P2P</p>
+                  </a>
+              </li>
 
 
               <li class="nav-item {{ request()->routeIs('reference.*') || request()->routeIs('daily.*') || request()->routeIs('generation.*') ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link active">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-currency-dollar"></i>
                   <p>
                     Income
@@ -129,34 +128,34 @@
 
                 <ul class="nav nav-treeview">
 
-                  <li class="nav-item">
-                      <a href="{{ route('reference.index', ['tab' => 'reference', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'reference' ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-circle"></i>
-                        <p>Reference</p>
-                      </a>
-                  </li>
+                <li class="nav-item">
+                    <a href="{{ route('reference.index', ['tab' => 'reference', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'reference' ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Reference</p>
+                    </a>
+                </li>
 
 
-                  <li class="nav-item">
-                      <a href="{{ route('daily.index', ['tab' => 'daily', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'daily' ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-circle"></i>
-                        <p>Daily</p>
-                      </a>
-                  </li>
+                <li class="nav-item">
+                    <a href="{{ route('daily.index', ['tab' => 'daily', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'daily' ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daily</p>
+                    </a>
+                </li>
 
-                  <li class="nav-item">
-                      <a href="{{ route('generation.index', ['tab' => 'generation', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'generation' ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-circle"></i>
-                        <p>generation</p>
-                      </a>
-                  </li>
+                <li class="nav-item">
+                    <a href="{{ route('generation.index', ['tab' => 'generation', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'generation' ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>generation</p>
+                    </a>
+                </li>
 
-                  <li class="nav-item">
-                      <a href="{{ route('salary.index', ['tab' => 'salary', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'salary' ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-circle"></i>
-                        <p>Salary</p>
-                      </a>
-                  </li>
+                <li class="nav-item">
+                    <a href="{{ route('salary.index', ['tab' => 'salary', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'salary' ? 'active' : '' }}">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Salary</p>
+                    </a>
+                </li>
 
                     <li class="nav-item">
                       <a href="{{ route('ib.index', ['tab' => 'ib', 'flag' => 'true']) }}" class="nav-link {{ request('tab') == 'ib' ? 'active' : '' }}">
@@ -170,7 +169,7 @@
 
 
               <li class="nav-item {{ request()->routeIs('change-password.*') || request()->routeIs('salary-slote.*') || request()->routeIs('investment-charge.*') || request()->routeIs('deposite-commission.*') ||  request()->routeIs('rate.*') || request()->routeIs('bussiness.*') || request()->routeIs('profile.*') || request()->routeIs('generation-commission.*') || request()->routeIs('global-settings.*') ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link active">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-boxes"></i>
                   <p>
                     Settings
@@ -261,10 +260,7 @@
                 </form>
               </li>
 
-
-
-                </ul>
+            </ul>
         <!--end::Sidebar Menu-->
         </nav>
-
 </div>
