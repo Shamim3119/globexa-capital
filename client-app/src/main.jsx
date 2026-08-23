@@ -39,8 +39,11 @@ import { P2PProvider } from "./context/P2PContext";
 import { RefundProvider } from "./context/RefundContext";
 import { AccountProvider } from "./context/AccountContext";
 import { IncomeProvider } from "./context/IncomeContext";
+import { SalesProvider } from "./context/SalesContext";
+import {VerificationProvider} from "./context/VerificationContext";
  
 import { SidebarProvider } from "./context/SidebarContext.jsx";
+
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -58,7 +61,11 @@ createRoot(document.getElementById("root")).render(
                                                     <RefundProvider>
                                                         <AccountProvider>
                                                             <IncomeProvider>
-                                                                <App />
+                                                                <SalesProvider>
+                                                                    <VerificationProvider>
+                                                                        <App />
+                                                                    </VerificationProvider>
+                                                                </SalesProvider>
                                                             </IncomeProvider>
                                                         </AccountProvider>
                                                     </RefundProvider>

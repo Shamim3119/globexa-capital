@@ -13,6 +13,8 @@ import {
     IconTransfer,
     IconFileDescription,
     IconLock,
+    IconShieldCheck,     
+    IconTrendingUp,     
 } from "@tabler/icons-react";
 
 import { NavLink } from "react-router-dom";
@@ -115,8 +117,15 @@ export default function Sidebar() {
                     icon: IconWallet,
                     path: "/incomes",
                 },
+                {
+                    name: "Sales",
+                    icon: IconTrendingUp,
+                    path: "/sales",
+                },
+ 
 
             ],
+ 
         },
 
 
@@ -147,6 +156,7 @@ export default function Sidebar() {
             title: "Account",
 
             items: [
+                
 
                 {
                     name: "My Account",
@@ -154,10 +164,18 @@ export default function Sidebar() {
                     path: "/account",
                 },
 
+ 
+
                 {
                     name: "Profile",
                     icon: IconUser,
                     path: "/profile",
+                },
+                
+                {
+                    name: "Verification",
+                    icon: IconShieldCheck,
+                    path: "/verification",
                 },
 
             ],

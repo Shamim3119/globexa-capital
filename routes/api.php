@@ -26,6 +26,41 @@ use App\Http\Controllers\Api\DashboardController;
 
 use App\Http\Controllers\Api\UserProfile;
 
+use App\Http\Controllers\Api\ClientNetworkController;
+
+use App\Http\Controllers\Api\VerificationController;
+
+// Route::post('/verification',[VerificationController::class, 'update']);
+
+ 
+Route::prefix('verification')->group(function () {
+
+    Route::get(
+        '/{clientId}',
+        [VerificationController::class, 'show']
+    );
+
+    Route::put(
+        '/{clientId}/step-1',
+        [VerificationController::class, 'updateStep1']
+    );
+
+    Route::put(
+        '/{clientId}/step-2',
+        [VerificationController::class, 'updateStep2']
+    );
+
+    // File upload should use POST
+    Route::post(
+        '/{clientId}/step-3',
+        [VerificationController::class, 'updateStep3']
+    );
+
+});
+ 
+
+Route::get('/client/{id}/network-investments', [ClientNetworkController::class, 'getNetworkInvestmentBalances']);
+
 
 Route::post('/client-login', [LoginController::class, 'login']);
 

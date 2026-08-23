@@ -20,6 +20,9 @@ import P2P from "../pages/p2p/P2P";
 import Refund from "../pages/refund/Refund";
 import Account from "../pages/account/Account";
 import Incomes from "../pages/incomes/Incomes";
+import Sales from "../pages/sales/Sales";
+import Verification from "../pages/verification/Verification";
+
 import CompanyDocuments from "../pages/company-documents/CompanyDocuments";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 
@@ -133,6 +136,14 @@ export default function AppRoutes(){
 
                     />
 
+                    <Route
+
+                        path="/verification"
+
+                        element={<Verification />}
+
+                    />
+
                     <Route 
                         path="/transfer" 
                         element={<Transfer />} 
@@ -158,6 +169,11 @@ export default function AppRoutes(){
                         path="/incomes"
                         element={<Incomes />}
                     />  
+
+                    <Route
+                        path="/sales"
+                        element={<Sales />}
+                    /> 
 
                     <Route
                         path="/company-documents"

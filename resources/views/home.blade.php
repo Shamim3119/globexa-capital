@@ -80,8 +80,8 @@ echo  $id = base_convert(str_replace(['L','R'], '', $value), 36, 10);
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a id="get-started-btn" class="btn-getstarted" href="https://client.globexacapital.com">Login</a>
-      <a id="get-started-btn" class="btn-getstarted" href="#registration">Registration</a>
+      <a id="login-btn" class="btn-getstarted" href="https://client.globexacapital.com">Login</a>
+      <a id="registration-btn" class="btn-getstarted" href="#registration">Registration</a>
 
     </div>
   </header>
@@ -875,7 +875,10 @@ echo  $id = base_convert(str_replace(['L','R'], '', $value), 36, 10);
 
       if (ref) {
           document.getElementById('ref').value = window.location.href;
-          document.getElementById('get-started-btn').click();
+          // Scroll to registration section
+          document.getElementById('registration').scrollIntoView({
+              behavior: 'smooth'
+          });
           document.getElementById('btnSubmitLink').click();
           
       }
