@@ -11,6 +11,6 @@ class IncomeIB extends Model
     protected $fillable = [
         'client_id',
         'amount',
-        'invest_id',
+        'balance',
     ];
 }

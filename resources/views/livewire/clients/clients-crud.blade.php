@@ -247,8 +247,6 @@
                                             {{ $clients->firstItem() + $loop->index }}
                                         </td>
 
-
-                                        {{-- ID --}} -   {{-- Name --}}
                                         <td>
                                             {{ $client->id }}-{{ $client->name }}
                                 
@@ -365,8 +363,8 @@
                                             </button>
 
                                             {{-- Verification Button --}}
-                                            @if($client->verification_status == 2)
-                                                {{-- 2: Success (Green), Clickable, Shows Modal --}}
+                                            @if($client->verification_status == 1)
+                                                {{-- 1: Success (Green), Clickable, Shows Modal --}}
                                                 <button
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#ModalVerification"
@@ -376,8 +374,8 @@
                                                 >
                                                     <i class="bi bi-shield-check"></i>
                                                 </button>
-                                            @elseif($client->verification_status == 1)
-                                                {{-- 1: Warning (Yellow), Clickable, Shows Modal --}}
+                                            @elseif($client->verification_status == 2)
+                                                {{-- 2: Warning (Yellow), Clickable, Shows Modal --}}
                                                 <button
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#ModalVerification"
@@ -629,6 +627,7 @@
                         <div class="row g-4">
 
                             {{-- Document Image --}}
+                            {{-- Document Image --}}
                             <div class="col-md-6">
 
                                 <div class="card border">
@@ -641,18 +640,32 @@
 
                                     <div class="card-body text-center">
 
-                                        @if($verificationDocImg)
+                                        @if(count($verificationDocImg) > 0)
 
-                                            <img
-                                                src="{{ asset('storage/' . $verificationDocImg) }}"
-                                                class="img-fluid rounded border"
-                                                style="
-                                                    max-height:600px;
-                                                    width:100%;
-                                                    object-fit:contain;
-                                                "
-                                                alt="Verification Document"
-                                            >
+                                            <div class="row g-2">
+
+                                                @foreach($verificationDocImg as $docImg)
+
+                                                    <div class="col-12">
+                                                        <img
+                                                            src="{{ asset('storage/' . $docImg) }}"
+                                                            class="img-fluid rounded border"
+                                                            style="
+                                                                max-height:280px;
+                                                                width:100%;
+                                                                object-fit:contain;
+                                                                cursor:pointer;
+                                                            "
+                                                            alt="Verification Document"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#ImagePreviewModal"
+                                                            onclick="document.getElementById('previewImg').src = this.src"
+                                                        >
+                                                    </div>
+
+                                                @endforeach
+
+                                            </div>
 
                                         @else
 
@@ -762,13 +775,13 @@
                                                 </th>
                                                 <td>
 
-                                                    @if($verificationClient->verification_status == 2)
+                                                    @if($verificationClient->verification_status == 1)
 
                                                         <span class="badge bg-success">
                                                             Success
                                                         </span>
 
-                                                    @elseif($verificationClient->verification_status == 1)
+                                                    @elseif($verificationClient->verification_status == 2)
 
                                                         <span class="badge bg-warning text-dark">
                                                             Pending
@@ -795,7 +808,7 @@
                                                 Verification Status
                                             </label>
 
-                                            @if($verificationClient->verification_status == 2)
+                                            @if($verificationClient->verification_status == 1)
 
                                                 {{-- Already verified --}}
                                                 <div>
@@ -820,7 +833,7 @@
                                                         Cancel
                                                     </option>
 
-                                                    <option value="2">
+                                                    <option value="1">
                                                         Success
                                                     </option>
                                                 </select>
@@ -830,6 +843,28 @@
                                                         {{ $message }}
                                                     </div>
                                                 @enderror
+
+                                                {{-- Description / Reason --}}
+                                                <div class="mt-3">
+
+                                                    <label class="form-label fw-bold">
+                                                        Verification Description
+                                                    </label>
+
+                                                    <textarea
+                                                        wire:model.defer="verification_description"
+                                                        class="form-control"
+                                                        rows="3"
+                                                        placeholder="Add a note or reason for this status (optional)"
+                                                    ></textarea>
+
+                                                    @error('verificationDescription')
+                                                        <div class="text-danger mt-1">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+
+                                                </div>
 
                                             @endif
 
@@ -864,7 +899,7 @@
                         Close
                     </button>
 
-                    @if($verificationClient && $verificationClient->verification_status != 2)
+                    @if($verificationClient && $verificationClient->verification_status != 1)
 
                         <button
                             type="button"

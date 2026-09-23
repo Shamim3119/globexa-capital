@@ -12,6 +12,7 @@ class SalarySlot extends Model
                             'left_amount', 
                             'right_amount',
                             'salary_amount',
+                            'minimum_sales',
  
                         ];
 }

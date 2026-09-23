@@ -58,7 +58,7 @@ export default function ExchangeRates({ profile }) {
 
                                             <div className="display-6 fw-bold mt-2">
 
-                                                ৳ {item.value}
+                                                $ {item.value}
 
                                             </div>
 

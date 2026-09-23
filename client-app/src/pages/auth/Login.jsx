@@ -28,6 +28,29 @@ export default function Login() {
     const [error, setError] = useState("");
 
 
+    const getDeviceId = () => {
+
+        let deviceId =
+            localStorage.getItem("globexa_device_id");
+
+
+        if (!deviceId) {
+
+            deviceId =
+                crypto.randomUUID();
+
+            localStorage.setItem(
+                "globexa_device_id",
+                deviceId
+            );
+
+        }
+
+
+        return deviceId;
+    };
+
+
     const submit = async (e) => {
 
         e.preventDefault();
@@ -49,11 +72,20 @@ export default function Login() {
             setLoading(true);
 
 
+            const deviceId = getDeviceId();
+
+
             const response = await api.post(
                 "/client-login",
                 {
                     userid: loginId,
                     password: password,
+
+                    device_id: deviceId,
+
+                    device_name: "Web Browser",
+
+                    platform: "web",
                 }
             );
 
@@ -64,24 +96,65 @@ export default function Login() {
             );
 
 
-            if (response.data.success) {
+            /*
+            |--------------------------------------------------------------------------
+            | New Device - OTP Required
+            |--------------------------------------------------------------------------
+            */
 
-                login(response.data.user);
+            if (response.data?.device_verification_required) {
 
-                navigate("/dashboard");
-
-            } else {
-
-                setError(
-                    response.data.message ||
-                    "Invalid Login"
+                navigate(
+                    "/verify-login-device",
+                    {
+                        state: {
+                            userId: loginId,
+                            deviceId: deviceId,
+                            email: response.data?.email || "",
+                        },
+                    }
                 );
 
+                return;
             }
 
 
-        } catch (error) {
+            /*
+            |--------------------------------------------------------------------------
+            | Existing Trusted Device
+            |--------------------------------------------------------------------------
+            */
 
+            if (
+                response.data?.success &&
+                response.data?.token
+            ) {
+
+                login({
+                    ...response.data.user,
+                    token: response.data.token,
+                });
+
+
+                navigate("/dashboard");
+
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Login Failed
+            |--------------------------------------------------------------------------
+            */
+
+            setError(
+                response.data?.message ||
+                "Invalid Login"
+            );
+
+
+        } catch (error) {
 
             console.log(error);
 

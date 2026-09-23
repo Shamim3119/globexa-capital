@@ -31,7 +31,7 @@ class ClientsCrud extends Component
     public $rightCount = 0;
 
     public $verification_status;
-
+    public $verification_description = '';
     /*
     |--------------------------------------------------------------------------
     | Search / Filter
@@ -68,8 +68,9 @@ class ClientsCrud extends Component
     public $verificationPostCode = '';
     public $verificationCity = '';
     public $verificationDocType = '';
-    public $verificationDocImg = '';
+    public $verificationDocImg = [];
     public $verificationStatus = 0;
+
 
     public function showVerification($id)
     {
@@ -96,11 +97,40 @@ class ClientsCrud extends Component
         $this->verificationDocType =
             $this->verificationClient->doc_type;
 
-        $this->verificationDocImg =
-            $this->verificationClient->doc_img;
+        $this->verificationDocImg = $this->decodeDocImages(
+            $this->verificationClient->doc_img
+        );
 
         $this->verificationStatus =
-            $this->verificationClient->verification_status;
+            in_array($this->verificationClient->verification_status, [0, 1])
+                ? $this->verificationClient->verification_status
+                : 0;
+
+        $this->verification_description =
+            $this->verificationClient->verification_description;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Decode doc_img (JSON array or legacy single path) into a clean array
+    |--------------------------------------------------------------------------
+    */
+
+    private function decodeDocImages($raw)
+    {
+        if (empty($raw)) {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+
+        // Already a valid JSON array of paths
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        // Fallback: legacy data was a single plain path string
+        return [$raw];
     }
 
     public function updateVerificationStatus()
@@ -110,7 +140,7 @@ class ClientsCrud extends Component
         }
 
         // Already verified - cannot change again
-        if ($this->verificationClient->verification_status == 2) {
+        if ($this->verificationClient->verification_status == 1) {
 
             $this->dispatch(
                 'show-toast',
@@ -121,16 +151,17 @@ class ClientsCrud extends Component
         }
 
         $this->validate([
-            'verificationStatus' => 'required|in:0,2',
+            'verificationStatus' => 'required|in:0,1',
         ]);
 
         $this->verificationClient->update([
             'verification_status' => $this->verificationStatus,
+            'verification_description' => $this->verification_description,
         ]);
 
         $this->verificationClient->refresh();
 
-        $message = $this->verificationStatus == 2
+        $message = $this->verificationStatus == 1
             ? 'Client Verification Successful'
             : 'Client Verification Cancelled';
 
@@ -317,7 +348,8 @@ class ClientsCrud extends Component
         */
 
         $clients = $query
-            ->orderByDesc('id')
+            ->orderByDesc('verification_status')
+            ->orderBy('id', 'asc')
             ->paginate(25);
 
         return view('livewire.clients.clients-crud', [

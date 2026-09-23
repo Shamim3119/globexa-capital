@@ -58,7 +58,7 @@
                                 placeholder="Name"
                                 wire:model.defer="left_amount"
                             >
-                            @error('name')
+                            @error('left_amount')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -72,7 +72,7 @@
                                 placeholder="Name"
                                 wire:model.defer="right_amount"
                             >
-                            @error('name')
+                            @error('right_amount')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -85,7 +85,19 @@
                                 placeholder="Salary Amount"
                                 wire:model.defer="salary_amount"
                             >
-                            @error('name')
+                            @error('salary_amount')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="mb-2">Minimum Sales  :</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Minimum Sales"
+                                wire:model.defer="minimum_sales"
+                            >
+                            @error('minimum_sales')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -123,6 +135,7 @@
                                 <th style="text-align:right;">Team A Amount</th>
                                 <th style="text-align:right;">Team B Amount</th>
                                 <th style="text-align:right;">Salary A Amount</th>
+                                <th style="text-align:right;">Minimum Sales</th>
                                 <th style="text-align:center; width:150px;">Action</th>
                             </tr>
                         </thead>
@@ -138,19 +151,20 @@
                                     <td style="text-align:right;">{{ $slot->left_amount }}</td>
                                     <td style="text-align:right;">{{ $slot->right_amount }}</td>
                                     <td style="text-align:right;">{{ $slot->salary_amount }}</td>
+                                    <td style="text-align:right;">{{ $slot->minimum_sales }}</td>
 
                                     <td style="text-align:center;width:150px;">
                                         <button   
                                             wire:click="edit({{ $slot->id }})"
                                             class="btn btn-primary btn-sm">
-                                            Edit
+                                            <i class="bi bi-pencil-square"></i>
                                         </button>
 
                                         <button
                                             wire:click="delete({{ $slot->id }})"
                                             class="btn btn-danger btn-sm"
                                         >
-                                            Delete
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
                                     </td>
 

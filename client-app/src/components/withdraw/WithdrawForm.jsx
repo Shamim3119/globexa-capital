@@ -127,7 +127,7 @@ const WithdrawForm = () => {
                                 <strong>
                                     Withdraw Amount:
                                 </strong>{" "}
-                                ৳
+                                $
                                 {withdrawAmount.toFixed(2)}
                             </div>
                         </>

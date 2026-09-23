@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
+
+import api from "../api/api";
 
 
 const AuthContext = createContext(null);
@@ -7,22 +14,195 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
 
     const [user, setUser] = useState(null);
+
     const [loading, setLoading] = useState(true);
 
 
-    useEffect(() => {
+    /*
+    |--------------------------------------------------------------------------
+    | Refresh User From Laravel
+    |--------------------------------------------------------------------------
+    */
 
-        const savedUser = localStorage.getItem("user");
+    const refreshUser = async (userId = null) => {
 
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
+        const id = userId || user?.id;
+
+        if (!id) {
+            return {
+                success: false,
+                message: "User ID not found.",
+            };
         }
 
-        setLoading(false);
+
+        try {
+
+            const response = await api.get(
+                "/get-profile",
+                {
+                    params: {
+                        id: id,
+                    },
+                }
+            );
+
+
+            const profileUser =
+                response.data?.user;
+
+
+            if (!profileUser) {
+
+                return {
+                    success: false,
+                    message: "Unable to load user profile.",
+                };
+
+            }
+
+
+            /*
+             * IMPORTANT:
+             *
+             * /get-profile does not return every login field.
+             * Therefore merge the new profile data with
+             * the existing user data.
+             *
+             * This keeps:
+             * id
+             * name
+             * photo
+             * etc.
+             *
+             * while updating:
+             * investment_balance
+             * deposit_balance
+             * income_balance
+             * aCount
+             * bCount
+             * rates
+             */
+
+            setUser((currentUser) => {
+
+                const updatedUser = {
+                    ...(currentUser || {}),
+                    ...profileUser,
+                    id: currentUser?.id || id,
+                };
+
+
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(updatedUser)
+                );
+
+
+                return updatedUser;
+
+            });
+
+
+            return {
+                success: true,
+                user: profileUser,
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "Refresh User Error:",
+                error.response?.data || error
+            );
+
+
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    "Unable to refresh user profile.",
+            };
+
+        }
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load Saved User
+    |--------------------------------------------------------------------------
+    */
+
+    useEffect(() => {
+
+        const initializeUser = async () => {
+
+            const savedUser =
+                localStorage.getItem("user");
+
+
+            if (!savedUser) {
+
+                setLoading(false);
+
+                return;
+
+            }
+
+
+            try {
+
+                const parsedUser =
+                    JSON.parse(savedUser);
+
+
+                /*
+                 * First show saved data immediately
+                 */
+
+                setUser(parsedUser);
+
+
+                /*
+                 * Then get fresh balances from Laravel
+                 */
+
+                await refreshUser(parsedUser.id);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Initialize User Error:",
+                    error
+                );
+
+                localStorage.removeItem("user");
+
+                setUser(null);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        };
+
+
+        initializeUser();
 
     }, []);
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Login
+    |--------------------------------------------------------------------------
+    */
 
     const login = (userData) => {
 
@@ -31,11 +211,17 @@ export function AuthProvider({ children }) {
             JSON.stringify(userData)
         );
 
+
         setUser(userData);
 
     };
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Logout
+    |--------------------------------------------------------------------------
+    */
 
     const logout = () => {
 
@@ -46,6 +232,11 @@ export function AuthProvider({ children }) {
     };
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Context
+    |--------------------------------------------------------------------------
+    */
 
     return (
 
@@ -54,7 +245,8 @@ export function AuthProvider({ children }) {
                 user,
                 login,
                 logout,
-                loading
+                loading,
+                refreshUser,
             }}
         >
 
@@ -67,8 +259,12 @@ export function AuthProvider({ children }) {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| Hook
+|--------------------------------------------------------------------------
+*/
 
-// IMPORTANT: Login.jsx uses this export
 export function useAuth() {
 
     return useContext(AuthContext);

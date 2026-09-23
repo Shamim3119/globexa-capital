@@ -64,7 +64,7 @@ export default function WelcomeCard({ user }) {
                                 {" "}
 
                                 <strong>
-                                    ৳ {user?.salary_amount || "0.00"}
+                                    $ {user?.salary_amount || "0.00"}
                                 </strong>
 
                             </span>

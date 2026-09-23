@@ -30,6 +30,8 @@ import DashboardLayout from "../layouts/DashboardLayout";
 
 import ProtectedRoute from "./ProtectedRoute";
 
+import VerifyLoginDevice from "../pages/auth/VerifyLoginDevice";
+
 
 
 export default function AppRoutes(){
@@ -50,6 +52,11 @@ export default function AppRoutes(){
 
                     element={<Login />}
 
+                />
+
+                <Route
+                    path="/verify-login-device"
+                    element={<VerifyLoginDevice />}
                 />
 
                 <Route

@@ -8,14 +8,14 @@ use App\Http\Controllers\Controller;
 use App\Models\IncomeDaily;
 use App\Models\IncomeReference;
 use App\Models\IncomeGeneration;
-use App\Models\IncomeSalaries;
-use App\Models\IncomeIBS;
+use App\Models\IncomeSalary;
+use App\Models\IncomeIB;
 
 class IncomeController extends Controller
 {
     public function index(Request $request)
     {
-         $request->validate([
+        $request->validate([
             'client_id' => 'required',
             'type' => 'required',
             'from_date' => 'required|date',
@@ -37,34 +37,35 @@ class IncomeController extends Controller
                 break;
 
             case 'Salaries Income':
-                $model = IncomeSalaries::class;
+                $model = IncomeSalary::class;
                 break;
 
+            case 'IB Income':
             case 'IBS Income':
-                $model = IncomeIBS::class;
+                $model = IncomeIB::class;
                 break;
 
             default:
                 return response()->json([
-                    'status'=>false,
-                    'message'=>'Invalid Income Type'
-                ]);
+                    'status' => false,
+                    'message' => 'Invalid Income Type'
+                ], 400);
         }
 
-        $rows = $model::where('client_id',$request->client_id)
-            ->whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date)
-            ->orderBy('created_at')
+        $rows = $model::where('client_id', $request->client_id)
+            ->whereDate('created_at', '>=', $request->from_date)
+            ->whereDate('created_at', '<=', $request->to_date)
+            ->orderBy('created_at', 'asc')
             ->get([
                 'amount',
                 'created_at'
             ]);
 
         return response()->json([
-            'status'=>true,
-            'type'=>$request->type,
-            'total'=>$rows->sum('amount'),
-            'data'=>$rows
+            'status' => true,
+            'type' => $request->type,
+            'total' => $rows->sum('amount'),
+            'data' => $rows
         ]);
     }
 }

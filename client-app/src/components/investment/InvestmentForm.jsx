@@ -111,7 +111,7 @@ export default function InvestmentForm({ onSuccess }) {
 
                             <strong>
 
-                                ৳ {Number(depositBalance || 0).toFixed(2)}
+                                $ {Number(depositBalance || 0).toFixed(2)}
 
                             </strong>
 
@@ -274,7 +274,7 @@ export default function InvestmentForm({ onSuccess }) {
                                 </span>
 
                                 <strong>
-                                    ৳ {Number(commission || 0).toFixed(2)}
+                                    $ {Number(commission || 0).toFixed(2)}
                                 </strong>
 
                             </div>

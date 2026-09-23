@@ -185,7 +185,7 @@ export default function InvestmentHistory() {
                                         className="me-1"
                                     />
 
-                                    ৳ {Number(item.amount || 0).toFixed(2)}
+                                    $ {Number(item.amount || 0).toFixed(2)}
 
                                 </div>
 

@@ -1,5 +1,6 @@
 import {
     IconShieldCheck,
+    IconAlertTriangle,
 } from "@tabler/icons-react";
 
 import VerificationSteps
@@ -14,6 +15,9 @@ import AddressVerificationForm
 import DocumentVerificationForm
     from "../../components/verification/DocumentVerificationForm";
 
+import VerificationApplicationView
+    from "../../components/verification/VerificationApplicationView";
+
 import {
     useVerification,
 } from "../../context/VerificationContext";
@@ -24,10 +28,41 @@ export default function Verification() {
     const {
 
         step,
+
+        loading,
+
         error,
         success,
 
+        verificationData,
+
+        verificationStatus,
+
     } = useVerification();
+
+
+    const status = Number(
+        verificationStatus ?? 0
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Can edit only when status = 0
+    |--------------------------------------------------------------------------
+    */
+
+    const canApply = status === 0;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Previous verification was cancelled/rejected
+    |--------------------------------------------------------------------------
+    */
+
+    const rejectionReason =
+        verificationData?.verification_description;
 
 
     return (
@@ -47,7 +82,6 @@ export default function Verification() {
                                 Account
 
                             </div>
-
 
                             <h2 className="page-title">
 
@@ -74,60 +108,188 @@ export default function Verification() {
                     }}
                 >
 
-                    <VerificationSteps />
+
+                    {/*
+                    |--------------------------------------------------------------------------
+                    | Loading
+                    |--------------------------------------------------------------------------
+                    */}
+
+                    {loading && !verificationData && (
+
+                        <div className="text-center py-5">
+
+                            <div
+                                className="spinner-border"
+                                role="status"
+                            />
+
+                        </div>
+
+                    )}
 
 
-                    {
-                        error && (
+                    {/*
+                    |--------------------------------------------------------------------------
+                    | ERROR
+                    |--------------------------------------------------------------------------
+                    */}
 
-                            <div className="alert alert-danger">
+                    {error && (
 
-                                {error}
+                        <div className="alert alert-danger">
+
+                            {error}
+
+                        </div>
+
+                    )}
+
+
+                    {/*
+                    |--------------------------------------------------------------------------
+                    | SUCCESS
+                    |--------------------------------------------------------------------------
+                    */}
+
+                    {success && (
+
+                        <div className="alert alert-success">
+
+                            {success}
+
+                        </div>
+
+                    )}
+
+
+                    {/*
+                    |--------------------------------------------------------------------------
+                    | REJECTED / CANCELLED REASON
+                    |
+                    | Show only when:
+                    | status = 0
+                    | and admin has entered a reason
+                    |--------------------------------------------------------------------------
+                    */}
+
+                    {canApply && rejectionReason && (
+
+                        <div className="alert alert-danger">
+
+                            <div className="d-flex">
+
+                                <IconAlertTriangle
+                                    size={28}
+                                    className="me-3 flex-shrink-0"
+                                />
+
+                                <div>
+
+                                    <h4 className="alert-title">
+
+                                        Your Previous Verification Was Cancelled
+
+                                    </h4>
+
+                                    <div className="mb-2">
+
+                                        Your previous verification
+                                        application was not approved.
+                                        Please correct the issue below
+                                        and submit a new application.
+
+                                    </div>
+
+
+                                    <div
+                                        className="p-3 rounded"
+                                        style={{
+                                            backgroundColor:
+                                                "rgba(0,0,0,0.05)",
+                                        }}
+                                    >
+
+                                        <strong>
+
+                                            Reason:
+
+                                        </strong>
+
+                                        <div className="mt-1">
+
+                                            {rejectionReason}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
 
                             </div>
 
-                        )
-                    }
+                        </div>
+
+                    )}
 
 
-                    {
-                        success && (
+                    {/*
+                    |--------------------------------------------------------------------------
+                    | STATUS = 1 OR 2
+                    | Show submitted application only
+                    |--------------------------------------------------------------------------
+                    */}
 
-                            <div className="alert alert-success">
+                    {!canApply && verificationData && (
 
-                                {success}
+                        <VerificationApplicationView
 
-                            </div>
+                            data={verificationData}
 
-                        )
-                    }
+                            status={status}
 
+                        />
 
-                    {
-                        step === 1 && (
-
-                            <PersonalVerificationForm />
-
-                        )
-                    }
+                    )}
 
 
-                    {
-                        step === 2 && (
+                    {/*
+                    |--------------------------------------------------------------------------
+                    | STATUS = 0
+                    | Show application form
+                    |--------------------------------------------------------------------------
+                    */}
 
-                            <AddressVerificationForm />
+                    {canApply && (
 
-                        )
-                    }
+                        <>
+
+                            <VerificationSteps />
 
 
-                    {
-                        step === 3 && (
+                            {step === 1 && (
 
-                            <DocumentVerificationForm />
+                                <PersonalVerificationForm />
 
-                        )
-                    }
+                            )}
+
+
+                            {step === 2 && (
+
+                                <AddressVerificationForm />
+
+                            )}
+
+
+                            {step === 3 && (
+
+                                <DocumentVerificationForm />
+
+                            )}
+
+                        </>
+
+                    )}
 
                 </div>
 

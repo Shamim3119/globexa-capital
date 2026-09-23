@@ -29,7 +29,7 @@ export default function TeamCard({ user }) {
 
                                 <div className="team-business-value">
 
-                                    ৳ {Number(
+                                    $ {Number(
                                         user?.left_balance || 0
                                     ).toFixed(2)}
 
@@ -82,7 +82,7 @@ export default function TeamCard({ user }) {
 
                                 <div className="team-business-value">
 
-                                    ৳ {Number(
+                                    $ {Number(
                                         user?.right_balance || 0
                                     ).toFixed(2)}
 

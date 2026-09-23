@@ -10,7 +10,7 @@ class SalarySlotCrud extends Component
     public $updateMode = false;
     public $activeTab = 'salary-slot';
  
-    public $name, $rank, $left_amount,$right_amount, $salary_amount, $slot_id;
+    public $name, $rank, $left_amount,$right_amount, $salary_amount, $minimum_sales, $slot_id;
     public $salarySlots;
 
     private function resetInputFields()
@@ -20,6 +20,7 @@ class SalarySlotCrud extends Component
         $this->left_amount = '';
         $this->right_amount = '';
         $this->salary_amount = '';
+        $this->minimum_sales = '';
         $this->slot_id = null;
         
     }
@@ -43,6 +44,7 @@ class SalarySlotCrud extends Component
             'left_amount' => 'required|numeric',
             'right_amount' => 'required|numeric',
             'salary_amount' => 'required|numeric',
+            'minimum_sales' => 'required|numeric',
  
         ]);
 
@@ -73,6 +75,7 @@ class SalarySlotCrud extends Component
         $this->left_amount = $salary->left_amount;
         $this->right_amount = $salary->right_amount;
         $this->salary_amount = $salary->salary_amount;
+        $this->minimum_sales =  $salary->minimum_sales;
         $this->slot_id = $id;
 
         $this->updateMode = true;

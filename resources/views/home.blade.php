@@ -96,12 +96,109 @@ echo  $id = base_convert(str_replace(['L','R'], '', $value), 36, 10);
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
             <h1>Building Trust Beyond Markets</h1>
             <p>Globexa Capital is a modern international business brand focused on global financial innovation, digital opportunities, travel services, real estate development, and e-commerce solutions.</p>
-            <div class="d-flex">
-              <a href="#about" class="btn-get-started">Get Started</a>
-              <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
-            </div>
+
+
           </div>
           <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="200">
+
+          <div class="d-flex flex-wrap gap-3 app-download-buttons">
+
+ 
+  <a href="#" class="btn-app-download android-btn">
+      <i class="bi bi-android2"></i>
+      <span>
+          <small>Download for</small>
+          <strong>Android App</strong>
+      </span>
+  </a>
+
+  <a href="#" class="btn-app-download ios-btn">
+      <i class="bi bi-apple"></i>
+      <span>
+          <small>Download for</small>
+          <strong>iOS App</strong>
+      </span>
+  </a>
+ 
+
+  <style>
+
+    .app-download-buttons {
+      margin-top: 10px;
+    }
+
+    .btn-app-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 185px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      color: #fff;
+    }
+
+    .btn-app-download > i {
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .btn-app-download span {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .btn-app-download small {
+      font-size: 11px;
+      opacity: 0.75;
+      margin-bottom: 3px;
+    }
+
+    .btn-app-download strong {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .android-btn:hover {
+      background: #003366;
+      border-color: #003366;
+      color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.3);
+    }
+
+    .ios-btn:hover {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 576px) {
+      .app-download-buttons {
+        width: 100%;
+        flex-direction: column;
+      }
+
+
+      .btn-app-download {
+          width: 100%;
+          max-width: 220px;
+      }
+
+
+    }
+
+  </style>
+
+</div>
             <img src="{{ asset('assets/img/hero-img.png') }}" class="img-fluid animated" alt="">
           </div>
         </div>

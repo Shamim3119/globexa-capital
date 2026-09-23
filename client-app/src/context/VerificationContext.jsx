@@ -2,6 +2,7 @@ import {
     createContext,
     useContext,
     useState,
+    useEffect,
 } from "react";
 
 import api from "../api/api";
@@ -16,31 +17,213 @@ export function VerificationProvider({ children }) {
     const { user } = useAuth();
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | GENERAL STATE
+    |--------------------------------------------------------------------------
+    */
+
     const [step, setStep] = useState(1);
 
     const [loading, setLoading] = useState(false);
+
     const [error, setError] = useState("");
+
     const [success, setSuccess] = useState("");
 
 
-    // STEP 1
+    /*
+    |--------------------------------------------------------------------------
+    | VERIFICATION DATA
+    |--------------------------------------------------------------------------
+    */
+
+    const [verificationData, setVerificationData] =
+        useState(null);
+
+    const [verificationStatus, setVerificationStatus] =
+        useState(null);
+
+    const [initialLoading, setInitialLoading] =
+        useState(true);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STEP 1
+    |--------------------------------------------------------------------------
+    */
 
     const [firstName, setFirstName] = useState("");
+
     const [lastName, setLastName] = useState("");
+
     const [dateOfBirth, setDateOfBirth] = useState("");
 
 
-    // STEP 2
+    /*
+    |--------------------------------------------------------------------------
+    | STEP 2
+    |--------------------------------------------------------------------------
+    */
 
     const [address, setAddress] = useState("");
+
     const [postCode, setPostCode] = useState("");
+
     const [city, setCity] = useState("");
 
 
-    // STEP 3
+    /*
+    |--------------------------------------------------------------------------
+    | STEP 3
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT:
+    | This is now an ARRAY.
+    |
+    | NID              = 2 images
+    | Passport         = 1 image
+    | Driving License  = 2 images
+    |--------------------------------------------------------------------------
+    */
 
     const [docType, setDocType] = useState("");
-    const [docImage, setDocImage] = useState(null);
+
+    const [docImages, setDocImages] = useState([]);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD VERIFICATION
+    |--------------------------------------------------------------------------
+    */
+
+    const loadVerification = async () => {
+
+        if (!user?.id) {
+
+            setInitialLoading(false);
+
+            return;
+
+        }
+
+
+        try {
+
+            setInitialLoading(true);
+
+            setError("");
+
+
+            const response = await api.get(
+                `/verification/${user.id}`
+            );
+
+
+            if (response.data?.success) {
+
+                const data = response.data.data;
+
+                setVerificationData(data);
+
+                setVerificationStatus(
+                    Number(data.verification_status || 0)
+                );
+
+
+                /*
+                 * Populate form data.
+                 */
+
+                setFirstName(
+                    data.first_name || ""
+                );
+
+                setLastName(
+                    data.last_nanme ||
+                    data.last_name ||
+                    ""
+                );
+
+                setDateOfBirth(
+                    data.date_of_birth || ""
+                );
+
+                setAddress(
+                    data.verification_address || ""
+                );
+
+                setPostCode(
+                    data.post_code || ""
+                );
+
+                setCity(
+                    data.city || ""
+                );
+
+                setDocType(
+                    data.doc_type
+                        ? String(data.doc_type)
+                        : ""
+                );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Load Verification Error:",
+                error.response?.data || error
+            );
+
+
+            setError(
+                error.response?.data?.message ||
+                "Failed to load verification information."
+            );
+
+
+        } finally {
+
+            setInitialLoading(false);
+
+        }
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD ON USER CHANGE
+    |--------------------------------------------------------------------------
+    */
+
+    useEffect(() => {
+
+        if (user?.id) {
+
+            loadVerification();
+
+        } else {
+
+            setInitialLoading(false);
+
+        }
+
+    }, [user?.id]);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECK IF EDITING IS ALLOWED
+    |--------------------------------------------------------------------------
+    */
+
+    const canEdit =
+        Number(verificationStatus) === 0;
 
 
     /*
@@ -54,6 +237,17 @@ export function VerificationProvider({ children }) {
         if (!user?.id) {
 
             setError("User not found.");
+
+            return false;
+
+        }
+
+
+        if (!canEdit) {
+
+            setError(
+                "Verification has already been submitted. Editing is not allowed."
+            );
 
             return false;
 
@@ -78,39 +272,24 @@ export function VerificationProvider({ children }) {
         try {
 
             setLoading(true);
+
             setError("");
+
             setSuccess("");
-
-
-            const payload = {
-
-                first_name: firstName.trim(),
-
-                last_name: lastName.trim(),
-
-                date_of_birth: dateOfBirth,
-
-            };
-
-
-            console.log(
-                "Sending Step 1:",
-                payload
-            );
 
 
             const response = await api.put(
 
                 `/verification/${user.id}/step-1`,
 
-                payload
+                {
+                    first_name: firstName,
 
-            );
+                    last_name: lastName,
 
+                    date_of_birth: dateOfBirth,
+                }
 
-            console.log(
-                "Step 1 Response:",
-                response.data
             );
 
 
@@ -120,6 +299,13 @@ export function VerificationProvider({ children }) {
                     response.data?.message ||
                     "Personal information saved successfully."
                 );
+
+
+                setVerificationData(
+                    response.data?.data ||
+                    verificationData
+                );
+
 
                 setStep(2);
 
@@ -144,16 +330,20 @@ export function VerificationProvider({ children }) {
             );
 
 
-            const responseErrors =
+            const errors =
                 error.response?.data?.errors;
 
 
-            if (responseErrors) {
+            if (errors) {
+
+                const firstError = Object.values(errors)
+                    .flat()
+                    .shift();
 
                 setError(
-                    Object.values(responseErrors)
-                        .flat()
-                        .join(" ")
+                    firstError ||
+                    error.response?.data?.message ||
+                    "Failed to save personal information."
                 );
 
             } else {
@@ -184,20 +374,48 @@ export function VerificationProvider({ children }) {
     |--------------------------------------------------------------------------
     */
 
-    const submitStep2 = async () => {
+/*
+|--------------------------------------------------------------------------
+| STEP 2 SUBMIT
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| STEP 2 SUBMIT
+|--------------------------------------------------------------------------
+*/
+
+    const submitStep2 = async (formDataPayload) => {
 
         if (!user?.id) {
 
             setError("User not found.");
+
             return false;
 
         }
 
 
+        if (!canEdit) {
+
+            setError(
+                "Verification has already been submitted. Editing is not allowed."
+            );
+
+            return false;
+
+        }
+
+        const currentAddress = String(formDataPayload?.address ?? address ?? "");
+        const currentPostCode = String(formDataPayload?.postCode ?? postCode ?? "");
+        const currentCity = String(formDataPayload?.city ?? city ?? "");
+
+
         if (
-            !address.trim() ||
-            !postCode.trim() ||
-            !city.trim()
+            !currentAddress.trim() ||
+            !currentPostCode.trim() ||
+            !currentCity.trim()
         ) {
 
             setError(
@@ -212,7 +430,9 @@ export function VerificationProvider({ children }) {
         try {
 
             setLoading(true);
+
             setError("");
+
             setSuccess("");
 
 
@@ -221,9 +441,11 @@ export function VerificationProvider({ children }) {
                 `/verification/${user.id}/step-2`,
 
                 {
-                    verification_address: address,
-                    post_code: postCode,
-                    city: city,
+                    verification_address: currentAddress,
+
+                    post_code: currentPostCode,
+
+                    city: currentCity,
                 }
 
             );
@@ -234,6 +456,12 @@ export function VerificationProvider({ children }) {
                 setSuccess(
                     response.data?.message ||
                     "Address information saved successfully."
+                );
+
+
+                setVerificationData(
+                    response.data?.data ||
+                    verificationData
                 );
 
 
@@ -260,12 +488,31 @@ export function VerificationProvider({ children }) {
             );
 
 
-            setError(
+            const errors =
+                error.response?.data?.errors;
 
-                error.response?.data?.message ||
-                "Failed to save address information."
 
-            );
+            if (errors) {
+
+                const firstError = Object.values(errors)
+                    .flat()
+                    .shift();
+
+                setError(
+                    firstError ||
+                    error.response?.data?.message ||
+                    "Failed to save address information."
+                );
+
+            } else {
+
+                setError(
+                    error.response?.data?.message ||
+                    "Failed to save address information."
+                );
+
+            }
+
 
             return false;
 
@@ -307,10 +554,43 @@ export function VerificationProvider({ children }) {
         }
 
 
-        if (!docImage) {
+        const requiresBothSides =
+            Number(docType) === 1 ||
+            Number(docType) === 3;
+
+
+        if (docImages.length === 0) {
 
             setError(
                 "Please upload your verification document."
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            requiresBothSides &&
+            docImages.length < 2
+        ) {
+
+            setError(
+                "Please upload both front and back sides of your document."
+            );
+
+            return false;
+
+        }
+
+
+        if (
+            Number(docType) === 2 &&
+            docImages.length !== 1
+        ) {
+
+            setError(
+                "Please upload only one image for Passport."
             );
 
             return false;
@@ -330,24 +610,24 @@ export function VerificationProvider({ children }) {
 
             formData.append(
                 "doc_type",
-                String(docType)
+                docType
             );
 
 
-            formData.append(
-                "doc_img",
-                docImage
-            );
+            /*
+            * Append all images.
+            *
+            * Laravel receives:
+            * doc_images[]
+            */
+            docImages.forEach((image) => {
 
+                formData.append(
+                    "doc_images[]",
+                    image
+                );
 
-            console.log(
-                "Submitting Step 3:",
-                {
-                    clientId: user.id,
-                    docType: docType,
-                    docImage: docImage,
-                }
-            );
+            });
 
 
             const response = await api.post(
@@ -359,18 +639,15 @@ export function VerificationProvider({ children }) {
             );
 
 
-            console.log(
-                "Step 3 Response:",
-                response.data
-            );
-
-
             if (response.data?.success) {
 
                 setSuccess(
                     response.data?.message ||
-                    "Verification completed successfully."
+                    "Verification submitted successfully."
+
                 );
+
+                await loadVerification();
 
                 return true;
 
@@ -379,7 +656,7 @@ export function VerificationProvider({ children }) {
 
             setError(
                 response.data?.message ||
-                "Failed to upload verification document."
+                "Failed to submit verification."
             );
 
             return false;
@@ -393,23 +670,29 @@ export function VerificationProvider({ children }) {
             );
 
 
-            const responseErrors =
+            const validationErrors =
                 error.response?.data?.errors;
 
 
-            if (responseErrors) {
+            if (validationErrors) {
+
+                const firstError = Object.values(
+                    validationErrors
+                )[0]?.[0];
+
 
                 setError(
-                    Object.values(responseErrors)
-                        .flat()
-                        .join(" ")
+                    firstError ||
+                    "Validation failed."
                 );
 
             } else {
 
                 setError(
+
                     error.response?.data?.message ||
                     "Failed to upload verification document."
+
                 );
 
             }
@@ -436,6 +719,7 @@ export function VerificationProvider({ children }) {
     const previousStep = () => {
 
         setError("");
+
         setSuccess("");
 
 
@@ -458,24 +742,36 @@ export function VerificationProvider({ children }) {
 
 
         setFirstName("");
+
         setLastName("");
+
         setDateOfBirth("");
 
 
         setAddress("");
+
         setPostCode("");
+
         setCity("");
 
 
         setDocType("");
-        setDocImage(null);
+
+        setDocImages([]);
 
 
         setError("");
+
         setSuccess("");
 
     };
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | CONTEXT VALUE
+    |--------------------------------------------------------------------------
+    */
 
     return (
 
@@ -483,16 +779,42 @@ export function VerificationProvider({ children }) {
 
             value={{
 
+                /*
+                 * General
+                 */
+
                 step,
                 setStep,
 
-
                 loading,
+
+                initialLoading,
+
                 error,
+                setError,
+
                 success,
+                setSuccess,
 
 
-                // STEP 1
+                /*
+                 * Verification data
+                 */
+
+                verificationData,
+
+                verificationStatus,
+
+                setVerificationStatus,
+
+                loadVerification,
+
+                canEdit,
+
+
+                /*
+                 * Step 1
+                 */
 
                 firstName,
                 setFirstName,
@@ -504,7 +826,9 @@ export function VerificationProvider({ children }) {
                 setDateOfBirth,
 
 
-                // STEP 2
+                /*
+                 * Step 2
+                 */
 
                 address,
                 setAddress,
@@ -516,19 +840,28 @@ export function VerificationProvider({ children }) {
                 setCity,
 
 
-                // STEP 3
+                /*
+                 * Step 3
+                 *
+                 * IMPORTANT:
+                 * Array, not single docImage
+                 */
 
                 docType,
                 setDocType,
 
-                docImage,
-                setDocImage,
+                docImages,
+                setDocImages,
 
 
-                // ACTIONS
+                /*
+                 * Actions
+                 */
 
                 submitStep1,
+
                 submitStep2,
+
                 submitStep3,
 
                 previousStep,

@@ -24,7 +24,7 @@ export default function DashboardStatCard({
 
                             <div className="dashboard-stat-value">
 
-                                ৳ {Number(today || 0).toFixed(2)}
+                                $ {Number(today || 0).toFixed(2)}
 
                             </div>
 
@@ -51,7 +51,7 @@ export default function DashboardStatCard({
                         </span>
 
                         <strong>
-                            ৳ {Number(lastWeek || 0).toFixed(2)}
+                            $ {Number(lastWeek || 0).toFixed(2)}
                         </strong>
 
                     </div>

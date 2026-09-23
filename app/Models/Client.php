@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
+// class Client extends Model
 
-class Client extends Model
+class Client extends Authenticatable
 {
+    use HasApiTokens;
     protected $fillable = [
                             'name', 
                             'address', 
@@ -33,7 +37,9 @@ class Client extends Model
                             'city',
                             'doc_type',
                             'doc_img',
+        
                             'verification_status',
+                            'verification_description',
 
                         ];
 
@@ -44,7 +50,7 @@ class Client extends Model
     }
 
 
- protected $table = 'clients';
+    protected $table = 'clients';
 
     public function investments()
     {
@@ -107,5 +113,16 @@ class Client extends Model
         }
 
         return $query->sum('amount');
+    }
+
+
+    public function devices()
+    {
+        return $this->hasMany(ClientDevice::class);
+    }
+
+    public function loginOtps()
+    {
+        return $this->hasMany(LoginOtp::class);
     }
 }

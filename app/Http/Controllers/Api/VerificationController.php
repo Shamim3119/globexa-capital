@@ -27,10 +27,20 @@ class VerificationController extends Controller
             'post_code' => 'required|string|max:45',
             'city' => 'required|string|max:45',
 
-            'doc_type' => 'required|in:1,2,3',
-
-            'doc_img' => 'required|image|max:5120',
+            'doc_type' => 'required|integer|in:1,2,3',
+            'doc_images' => 'required|array|min:1',
+            'doc_images.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
+
+        if (in_array($request->doc_type, [1, 3])
+            && count($request->file('doc_images')) < 2) {
+
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Front and back images are required for this document type.',
+            ], 422);
+        }
 
         $client = Client::findOrFail(
             $request->client_id
@@ -90,22 +100,123 @@ class VerificationController extends Controller
             ], 404);
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Decode multiple document images
+        |--------------------------------------------------------------------------
+        */
+
+        $docImages = [];
+
+
+        if ($client->doc_img) {
+
+            $decodedImages = json_decode(
+                $client->doc_img,
+                true
+            );
+
+
+            /*
+            * New format: JSON array
+            */
+
+            if (is_array($decodedImages)) {
+
+                $docImages = $decodedImages;
+
+            } else {
+
+                /*
+                * Backward compatibility:
+                * old records may contain one image path only
+                */
+
+                $docImages = [
+                    $client->doc_img
+                ];
+
+            }
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create public URLs
+        |--------------------------------------------------------------------------
+        */
+
+        $docImageUrls = array_map(
+
+            function ($imagePath) {
+
+                return url(
+                    Storage::url($imagePath)
+                );
+
+            },
+
+            $docImages
+
+        );
+
+
         return response()->json([
+
             'success' => true,
+
             'data' => [
-                'id' => $client->id,
-                'first_name' => $client->first_name,
-                'last_nanme' => $client->last_nanme,
-                'date_of_birth' => $client->date_of_birth,
-                'verification_address' => $client->verification_address,
-                'post_code' => $client->post_code,
-                'city' => $client->city,
-                'doc_type' => $client->doc_type,
-                'doc_img' => $client->doc_img,
-                'doc_img_url' => $client->doc_img
-                    ? url(Storage::url($client->doc_img))
-                    : null,
+
+                'id' =>
+                    $client->id,
+
+                'first_name' =>
+                    $client->first_name,
+
+                'last_nanme' =>
+                    $client->last_nanme,
+
+                'date_of_birth' =>
+                    $client->date_of_birth,
+
+                'verification_address' =>
+                    $client->verification_address,
+
+                'post_code' =>
+                    $client->post_code,
+
+                'city' =>
+                    $client->city,
+
+                'verification_status' =>
+                    (int) $client->verification_status,
+
+                'verification_description' =>
+                    $client->verification_description,
+
+                'doc_type' =>
+                    $client->doc_type,
+
+
+                /*
+                * Raw image paths
+                */
+
+                'doc_images' =>
+                    $docImages,
+
+
+                /*
+                * Public image URLs
+                */
+
+                'doc_image_urls' =>
+                    $docImageUrls,
+
             ],
+
         ]);
     }
 
@@ -123,6 +234,13 @@ class VerificationController extends Controller
                 'success' => false,
                 'message' => 'Client not found.',
             ], 404);
+        }
+
+        if ((int) $client->verification_status !== 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification has already been submitted. Editing is not allowed.',
+            ], 403);
         }
 
 
@@ -187,6 +305,13 @@ class VerificationController extends Controller
                 'success' => false,
                 'message' => 'Client not found.',
             ], 404);
+        }
+
+        if ((int) $client->verification_status !== 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification has already been submitted. Editing is not allowed.',
+            ], 403);
         }
 
 
@@ -255,76 +380,180 @@ class VerificationController extends Controller
         }
 
 
+        if ((int) $client->verification_status !== 0) {
+
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Verification has already been submitted. Editing is not allowed.',
+            ], 403);
+
+        }
+
+
         $validator = Validator::make($request->all(), [
+
             'doc_type' => [
                 'required',
                 'integer',
                 'in:1,2,3',
             ],
 
-            'doc_img' => [
+            'doc_images' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'doc_images.*' => [
                 'required',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:5120',
             ],
+
         ]);
 
 
         if ($validator->fails()) {
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
                 'errors' => $validator->errors(),
             ], 422);
+
         }
 
 
+        $images = $request->file('doc_images');
+
+
         /*
-         * Delete old document image if it exists.
-         */
+        * NID and Driving License require
+        * exactly Front + Back.
+        */
+
         if (
-            $client->doc_img &&
-            Storage::disk('public')->exists($client->doc_img)
+            in_array((int) $request->doc_type, [1, 3]) &&
+            count($images) !== 2
         ) {
-            Storage::disk('public')->delete(
-                $client->doc_img
-            );
+
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Front and back images are required for this document type.',
+            ], 422);
+
         }
 
 
         /*
-         * Upload new document.
-         *
-         * Example:
-         * verification-documents/1000/abc123.jpg
-         */
-        $documentPath = $request
-            ->file('doc_img')
-            ->store(
+        * Passport requires exactly one image.
+        */
+
+        if (
+            (int) $request->doc_type === 2 &&
+            count($images) !== 1
+        ) {
+
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'Passport requires exactly one image.',
+            ], 422);
+
+        }
+
+
+        /*
+        * Delete old document images.
+        *
+        * This assumes doc_img stores JSON.
+        */
+
+        $oldImages = $client->doc_img
+            ? json_decode($client->doc_img, true)
+            : [];
+
+
+        if (is_array($oldImages)) {
+
+            foreach ($oldImages as $oldImage) {
+
+                if (
+                    Storage::disk('public')->exists($oldImage)
+                ) {
+
+                    Storage::disk('public')->delete(
+                        $oldImage
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        /*
+        * Upload all new images.
+        */
+
+        $documentPaths = [];
+
+
+        foreach ($images as $image) {
+
+            $documentPaths[] = $image->store(
                 'verification-documents/' . $client->id,
                 'public'
             );
 
+        }
+
+
+        /*
+        * Save images as JSON.
+        */
 
         $client->update([
-            'doc_type' => $request->doc_type,
-            'doc_img' => $documentPath,
-            'verification_status' => 1,
+
+            'doc_type' =>
+                $request->doc_type,
+
+            'doc_img' =>
+                json_encode($documentPaths),
+
+            'verification_status' =>
+                2,
+
+            'verification_description' =>
+                null,
+
         ]);
 
 
         return response()->json([
+
             'success' => true,
-            'message' => 'Verification completed successfully.',
+
+            'message' =>
+                'Verification submitted successfully.',
+
             'data' => [
-                'id' => $client->id,
-                'doc_type' => $client->doc_type,
-                'doc_img' => $client->doc_img,
-                'doc_img_url' => url(
-                    Storage::url($client->doc_img)
-                ),
+
+                'id' =>
+                    $client->id,
+
+                'doc_type' =>
+                    $client->doc_type,
+
+                'doc_images' =>
+                    $documentPaths,
+
             ],
+
         ]);
     }
 }

@@ -40,13 +40,13 @@ export default function AccountOverview({ user, profile }) {
         {
             icon: IconCoins,
             label: "Deposit Rate",
-            value: `৳ ${profile.deposit_rate}`,
+            value: `$ ${profile.deposit_rate}`,
         },
 
         {
             icon: IconArrowDownCircle,
             label: "Withdraw Rate",
-            value: `৳ ${profile.withdraw_rate}`,
+            value: `$ ${profile.withdraw_rate}`,
         },
 
         {

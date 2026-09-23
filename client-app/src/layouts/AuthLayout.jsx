@@ -1,4 +1,5 @@
 import logo from "../assets/images/logo.png";
+import bgImage from "../assets/images/background-login.jpeg"; // 1. Import image
 
 export default function AuthLayout({ children }) {
     return (
@@ -48,7 +49,17 @@ export default function AuthLayout({ children }) {
             {/* Right Side */}
             <div className="auth-right">
 
-                <div className="login-card">
+                <div 
+                    className="login-card"
+                    /*
+                    style={{
+                        backgroundImage: `url(${bgImage})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat"
+                    }}
+                        */
+                >
 
                     {children}
 

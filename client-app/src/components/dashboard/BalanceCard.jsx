@@ -42,7 +42,7 @@ export default function BalanceCard({
 
                             <h2 className="mb-0">
 
-                                ৳ {value}
+                                $ {value}
 
                             </h2>
 

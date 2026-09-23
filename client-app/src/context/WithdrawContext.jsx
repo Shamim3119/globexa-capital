@@ -6,7 +6,8 @@ import { useToast } from "./ToastContext";
 const WithdrawContext = createContext(null);
 
 export const WithdrawProvider = ({ children }) => {
-    const { user } = useAuth();
+ 
+    const { user, refreshUser } = useAuth();
     const { showToast } = useToast();
 
     const [withdraws, setWithdraws] = useState([]);
@@ -260,6 +261,8 @@ export const WithdrawProvider = ({ children }) => {
                 amount: Number(form.amount),
                 otp: form.otp,
             });
+
+            await refreshUser();
 
             showToast(
                 form.id

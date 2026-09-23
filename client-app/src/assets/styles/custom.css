@@ -58,7 +58,35 @@ body{
     padding:40px;
     background:#f8fafc;
 }
+/*
+.login-card {
+    position: relative;
+    overflow: hidden;  
+}
 
+ 
+.login-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../assets/images/logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70%;  
+    
+ 
+    filter: grayscale(100%) brightness(180%) opacity(0.08);
+    
+    pointer-events: none;  
+    z-index: 0;
+}
+
+ 
+.login-card > * {
+    position: relative;
+    z-index: 1;
+}
+ */
 .login-card{
     width:100%;
     max-width:440px;

@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
 
 import {
     IconFileDescription,
@@ -7,6 +10,7 @@ import {
     IconCheck,
     IconLoader2,
     IconPhoto,
+    IconX,
 } from "@tabler/icons-react";
 
 import {
@@ -21,8 +25,8 @@ export default function DocumentVerificationForm() {
         docType,
         setDocType,
 
-        docImage,
-        setDocImage,
+        docImages,
+        setDocImages,
 
         loading,
 
@@ -32,109 +36,306 @@ export default function DocumentVerificationForm() {
     } = useVerification();
 
 
-    const [previewUrl, setPreviewUrl] = useState("");
+    const [previewUrls, setPreviewUrls] = useState([]);
 
 
     /*
-     * Create image preview when a new file is selected.
-     */
+    |--------------------------------------------------------------------------
+    | DOCUMENT TYPE RULE
+    |--------------------------------------------------------------------------
+    |
+    | 1 = NID              → 2 images
+    | 2 = Passport         → 1 image
+    | 3 = Driving License  → 2 images
+    |
+    */
+
+    const requiresBothSides =
+        Number(docType) === 1 ||
+        Number(docType) === 3;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMAGE PREVIEWS
+    |--------------------------------------------------------------------------
+    */
+
     useEffect(() => {
 
-        if (!docImage) {
+        if (!docImages.length) {
 
-            setPreviewUrl("");
+            setPreviewUrls([]);
 
             return;
 
         }
 
 
-        const url = URL.createObjectURL(docImage);
+        const urls = docImages.map((file) => {
 
-        setPreviewUrl(url);
+            return URL.createObjectURL(file);
+
+        });
 
 
-        /*
-         * Clean up object URL when component
-         * is unmounted or image changes.
-         */
+        setPreviewUrls(urls);
+
+
         return () => {
 
-            URL.revokeObjectURL(url);
+            urls.forEach((url) => {
+
+                URL.revokeObjectURL(url);
+
+            });
 
         };
 
-    }, [docImage]);
+    }, [docImages]);
 
 
-    const handleFileChange = (e) => {
+    /*
+    |--------------------------------------------------------------------------
+    | DOCUMENT TYPE CHANGE
+    |--------------------------------------------------------------------------
+    */
 
-        const file = e.target.files?.[0];
+    const handleDocumentTypeChange = (e) => {
 
-
-        if (!file) {
-
-            setDocImage(null);
-
-            return;
-
-        }
+        const selectedType = e.target.value;
 
 
-        /*
-         * Check image type.
-         */
-        const allowedTypes = [
-            "image/jpeg",
-            "image/jpg",
-            "image/png",
-            "image/webp",
-        ];
-
-
-        if (!allowedTypes.includes(file.type)) {
-
-            alert(
-                "Please select a JPG, JPEG, PNG or WEBP image."
-            );
-
-            e.target.value = "";
-
-            setDocImage(null);
-
-            return;
-
-        }
+        setDocType(selectedType);
 
 
         /*
-         * Maximum 5 MB.
+         * Clear previously selected images
+         * when changing document type.
          */
-        if (file.size > 5 * 1024 * 1024) {
 
-            alert(
-                "Image size must be less than 5 MB."
-            );
-
-            e.target.value = "";
-
-            setDocImage(null);
-
-            return;
-
-        }
-
-
-        setDocImage(file);
+        setDocImages([]);
 
     };
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILE CHANGE
+    |--------------------------------------------------------------------------
+    */
+
+    const handleFileChange = (e) => {
+
+        const selectedFiles = Array.from(
+            e.target.files || []
+        );
+
+
+        if (!selectedFiles.length) {
+
+            setDocImages([]);
+
+            return;
+
+        }
+
+
+        /*
+         * Passport can have only one image.
+         */
+
+        if (
+            Number(docType) === 2 &&
+            selectedFiles.length > 1
+        ) {
+
+            alert(
+                "Passport requires only one image."
+            );
+
+            e.target.value = "";
+
+            setDocImages([]);
+
+            return;
+
+        }
+
+
+        /*
+         * NID and Driving License
+         * require Front + Back.
+         */
+
+        if (
+            requiresBothSides &&
+            selectedFiles.length > 2
+        ) {
+
+            alert(
+                "Please upload only Front and Back images."
+            );
+
+            e.target.value = "";
+
+            setDocImages([]);
+
+            return;
+
+        }
+
+
+        const allowedTypes = [
+
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+
+        ];
+
+
+        for (const file of selectedFiles) {
+
+            if (
+                !allowedTypes.includes(
+                    file.type
+                )
+            ) {
+
+                alert(
+                    "Please select only JPG, JPEG, PNG or WEBP images."
+                );
+
+                e.target.value = "";
+
+                setDocImages([]);
+
+                return;
+
+            }
+
+
+            /*
+             * Maximum 5 MB per image.
+             */
+
+            if (
+                file.size >
+                5 * 1024 * 1024
+            ) {
+
+                alert(
+                    "Each image must be less than 5 MB."
+                );
+
+                e.target.value = "";
+
+                setDocImages([]);
+
+                return;
+
+            }
+
+        }
+
+
+        /*
+         * Store all selected images.
+         */
+
+        setDocImages(selectedFiles);
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | REMOVE IMAGE
+    |--------------------------------------------------------------------------
+    */
+
+    const removeImage = (index) => {
+
+        setDocImages((currentImages) =>
+            currentImages.filter(
+                (_, imageIndex) =>
+                    imageIndex !== index
+            )
+        );
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMIT
+    |--------------------------------------------------------------------------
+    */
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
 
         await submitStep3();
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LABELS
+    |--------------------------------------------------------------------------
+    */
+
+    const getImageTitle = (index) => {
+
+        if (
+            Number(docType) === 2
+        ) {
+
+            return "Passport Image";
+
+        }
+
+
+        return index === 0
+            ? "Front Side"
+            : "Back Side";
+
+    };
+
+
+    const getUploadText = () => {
+
+        if (
+            Number(docType) === 1
+        ) {
+
+            return "Upload NID Front and Back sides";
+
+        }
+
+
+        if (
+            Number(docType) === 3
+        ) {
+
+            return "Upload Driving License Front and Back sides";
+
+        }
+
+
+        if (
+            Number(docType) === 2
+        ) {
+
+            return "Upload Passport image";
+
+        }
+
+
+        return "Select document type first";
 
     };
 
@@ -159,12 +360,14 @@ export default function DocumentVerificationForm() {
             </div>
 
 
-            <form onSubmit={handleSubmit}>
+            <form
+                onSubmit={handleSubmit}
+            >
 
                 <div className="card-body">
 
 
-                    {/* Document Type */}
+                    {/* DOCUMENT TYPE */}
 
                     <div className="mb-4">
 
@@ -181,10 +384,8 @@ export default function DocumentVerificationForm() {
 
                             value={docType}
 
-                            onChange={(e) =>
-                                setDocType(
-                                    e.target.value
-                                )
+                            onChange={
+                                handleDocumentTypeChange
                             }
 
                             disabled={loading}
@@ -223,113 +424,146 @@ export default function DocumentVerificationForm() {
                     </div>
 
 
-                    {/* Image Upload */}
+                    {/* DOCUMENT REQUIREMENT */}
 
-                    <div className="mb-3">
-
-                        <label className="form-label">
-
-                            Document Image
-
-                        </label>
-
+                    {docType && (
 
                         <div
-                            className="border rounded p-4 text-center"
-                            style={{
-                                borderStyle: "dashed",
-                                backgroundColor: "#f8f9fa",
-                            }}
+                            className="alert alert-info"
                         >
 
-                            <IconUpload
-                                size={40}
-                                className="text-primary mb-2"
-                            />
+                            {
 
+                                requiresBothSides
 
-                            <div className="mb-3">
+                                    ? (
 
-                                <strong>
-                                    Upload your document
-                                </strong>
+                                        <>
+                                            <strong>
+                                                Two images required:
+                                            </strong>
 
-                                <div className="text-secondary small">
+                                            <br />
 
-                                    JPG, JPEG, PNG or WEBP
-                                    <br />
-                                    Maximum 5 MB
+                                            1. Front Side
 
-                                </div>
+                                            <br />
 
-                            </div>
+                                            2. Back Side
+                                        </>
 
+                                    )
 
-                            <input
+                                    : (
 
-                                type="file"
+                                        <>
+                                            <strong>
+                                                One image required:
+                                            </strong>
 
-                                className="form-control"
+                                            <br />
 
-                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                            Upload the Passport image.
+                                        </>
 
-                                onChange={handleFileChange}
+                                    )
 
-                                disabled={loading}
-
-                            />
+                            }
 
                         </div>
 
-                    </div>
+                    )}
 
 
-                    {/* Image Preview */}
+                    {/* FILE UPLOAD */}
 
-                    {previewUrl && (
+                    {docType && (
 
-                        <div className="mt-4">
+                        <div className="mb-4">
 
-                            <label className="form-label fw-bold">
+                            <label className="form-label">
 
-                                Document Preview
+                                Document Image
 
                             </label>
 
 
                             <div
-                                className="border rounded p-2 text-center"
+
+                                className="border rounded p-4 text-center"
+
                                 style={{
-                                    backgroundColor: "#f8f9fa",
+
+                                    borderStyle:
+                                        "dashed",
+
+                                    backgroundColor:
+                                        "#f8f9fa",
+
                                 }}
+
                             >
 
-                                <img
+                                <IconUpload
 
-                                    src={previewUrl}
+                                    size={40}
 
-                                    alt="Document Preview"
-
-                                    style={{
-                                        maxWidth: "100%",
-                                        maxHeight: "450px",
-                                        objectFit: "contain",
-                                        borderRadius: "6px",
-                                    }}
+                                    className="text-primary mb-2"
 
                                 />
 
-                            </div>
+
+                                <div className="mb-3">
+
+                                    <strong>
+
+                                        {
+                                            getUploadText()
+                                        }
+
+                                    </strong>
 
 
-                            <div className="mt-2 text-secondary small">
+                                    <div
+                                        className="text-secondary small"
+                                    >
 
-                                <IconPhoto
-                                    size={16}
-                                    className="me-1"
+                                        JPG, JPEG, PNG or WEBP
+
+                                        <br />
+
+                                        Maximum 5 MB per image
+
+                                    </div>
+
+                                </div>
+
+
+                                <input
+
+                                    type="file"
+
+                                    className="form-control"
+
+                                    accept="
+                                        image/jpeg,
+                                        image/png,
+                                        image/webp
+                                    "
+
+                                    multiple={
+                                        requiresBothSides
+                                    }
+
+                                    onChange={
+                                        handleFileChange
+                                    }
+
+                                    disabled={
+                                        loading
+                                    }
+
                                 />
-
-                                {docImage.name}
 
                             </div>
 
@@ -337,12 +571,169 @@ export default function DocumentVerificationForm() {
 
                     )}
 
+
+                    {/* IMAGE PREVIEWS */}
+
+                    {
+
+                        previewUrls.length > 0 && (
+
+                            <div className="mt-4">
+
+                                <label
+                                    className="form-label fw-bold"
+                                >
+
+                                    Document Preview
+
+                                </label>
+
+
+                                <div className="row row-cards">
+
+                                    {
+
+                                        previewUrls.map(
+                                            (
+                                                previewUrl,
+                                                index
+                                            ) => (
+
+                                                <div
+
+                                                    className="col-md-6"
+
+                                                    key={
+                                                        previewUrl
+                                                    }
+
+                                                >
+
+                                                    <div
+                                                        className="card"
+                                                    >
+
+                                                        <div
+                                                            className="card-header d-flex justify-content-between"
+                                                        >
+
+                                                            <strong>
+
+                                                                {
+
+                                                                    getImageTitle(
+                                                                        index
+                                                                    )
+
+                                                                }
+
+                                                            </strong>
+
+
+                                                            <button
+
+                                                                type="button"
+
+                                                                className="btn btn-sm btn-outline-danger"
+
+                                                                onClick={() =>
+                                                                    removeImage(
+                                                                        index
+                                                                    )
+                                                                }
+
+                                                                disabled={
+                                                                    loading
+                                                                }
+
+                                                            >
+
+                                                                <IconX
+                                                                    size={16}
+                                                                />
+
+                                                            </button>
+
+                                                        </div>
+
+
+                                                        <div
+                                                            className="card-body text-center"
+                                                        >
+
+                                                            <img
+
+                                                                src={
+                                                                    previewUrl
+                                                                }
+
+                                                                alt={
+                                                                    getImageTitle(
+                                                                        index
+                                                                    )
+                                                                }
+
+                                                                className="img-fluid rounded"
+
+                                                                style={{
+
+                                                                    maxHeight:
+                                                                        "300px",
+
+                                                                    objectFit:
+                                                                        "contain",
+
+                                                                }}
+
+                                                            />
+
+
+                                                            <div
+                                                                className="mt-2 text-secondary small"
+                                                            >
+
+                                                                <IconPhoto
+                                                                    size={16}
+                                                                    className="me-1"
+                                                                />
+
+                                                                {
+
+                                                                    docImages[
+                                                                        index
+                                                                    ]?.name
+
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            )
+                                        )
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        )
+
+                    }
+
                 </div>
 
 
-                {/* Footer */}
+                {/* FOOTER */}
 
-                <div className="card-footer d-flex justify-content-between">
+                <div
+                    className="card-footer d-flex justify-content-between"
+                >
 
                     <button
 
@@ -350,9 +741,13 @@ export default function DocumentVerificationForm() {
 
                         className="btn btn-outline-secondary"
 
-                        onClick={previousStep}
+                        onClick={
+                            previousStep
+                        }
 
-                        disabled={loading}
+                        disabled={
+                            loading
+                        }
 
                     >
 
@@ -372,37 +767,58 @@ export default function DocumentVerificationForm() {
 
                         className="btn btn-primary"
 
-                        disabled={loading}
+                        disabled={
+
+                            loading ||
+
+                            !docType ||
+
+                            docImages.length === 0 ||
+
+                            (
+                                requiresBothSides &&
+                                docImages.length < 2
+                            )
+
+                        }
 
                     >
 
-                        {loading ? (
+                        {
 
-                            <>
+                            loading
 
-                                <IconLoader2
-                                    size={18}
-                                    className="me-2 spinner-border spinner-border-sm"
-                                />
+                                ? (
 
-                                Uploading...
+                                    <>
 
-                            </>
+                                        <IconLoader2
+                                            size={18}
+                                            className="me-2 spinner-border spinner-border-sm"
+                                        />
 
-                        ) : (
+                                        Uploading...
 
-                            <>
+                                    </>
 
-                                <IconCheck
-                                    size={18}
-                                    className="me-2"
-                                />
+                                )
 
-                                Submit Verification
+                                : (
 
-                            </>
+                                    <>
 
-                        )}
+                                        <IconCheck
+                                            size={18}
+                                            className="me-2"
+                                        />
+
+                                        Submit Verification
+
+                                    </>
+
+                                )
+
+                        }
 
                     </button>
 

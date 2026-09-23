@@ -12,7 +12,7 @@ const P2PContext = createContext(null);
 
 export function P2PProvider({ children }) {
 
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();    
 
     const [p2ps, setP2ps] = useState([]);
 
@@ -236,7 +236,7 @@ export function P2PProvider({ children }) {
 
             });
 
-
+            await refreshUser();
             /*
             |--------------------------------------------------------------------------
             | Refresh P2P History

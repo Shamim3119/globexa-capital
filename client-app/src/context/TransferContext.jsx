@@ -13,7 +13,7 @@ const TransferContext = createContext(null);
 
 export function TransferProvider({ children }) {
 
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
 
 
     // --------------------------------------------------
@@ -281,7 +281,7 @@ export function TransferProvider({ children }) {
                 }
             );
 
-
+            await refreshUser();
             // --------------------------------------------------
             // Reload Transfer History
             // --------------------------------------------------

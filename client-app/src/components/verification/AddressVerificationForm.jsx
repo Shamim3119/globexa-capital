@@ -31,6 +31,8 @@ export default function AddressVerificationForm() {
     } = useVerification();
 
 
+ 
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -38,7 +40,11 @@ export default function AddressVerificationForm() {
         console.log("Submitting Step 2...");
 
 
-        const result = await submitStep2();
+        const result = await submitStep2({
+            address,
+            postCode,
+            city
+        });
 
 
         console.log(

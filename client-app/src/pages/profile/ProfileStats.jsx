@@ -11,7 +11,7 @@ export default function ProfileStats({ profile }) {
 
         {
             title: "Deposit Balance",
-            value: `৳ ${profile.deposit_balance}`,
+            value: `$ ${profile.deposit_balance}`,
             subtitle: "Available Balance",
             icon: IconWallet,
             color: "primary",
@@ -19,7 +19,7 @@ export default function ProfileStats({ profile }) {
 
         {
             title: "Investment Balance",
-            value: `৳ ${profile.investment_balance}`,
+            value: `$ ${profile.investment_balance}`,
             subtitle: "Running Investment",
             icon: IconChartLine,
             color: "green",
@@ -27,7 +27,7 @@ export default function ProfileStats({ profile }) {
 
         {
             title: "Income Balance",
-            value: `৳ ${profile.income_balance}`,
+            value: `$ ${profile.income_balance}`,
             subtitle: "Total Earnings",
             icon: IconCoins,
             color: "orange",
