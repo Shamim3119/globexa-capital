@@ -11,13 +11,20 @@ import AccountHistory from "../../components/account/AccountHistory";
 
 import { useAccount } from "../../context/AccountContext";
 
+
 export default function Account() {
 
-    const [activeTab, setActiveTab] = useState("account");
+    const [activeTab, setActiveTab] =
+        useState("account");
+
 
     const {
         id,
+        editAccount,
+        resetForm,
     } = useAccount();
+
+ 
 
 
     /*
@@ -26,14 +33,34 @@ export default function Account() {
     |--------------------------------------------------------------------------
     */
 
-    const handleEdit = () => {
+    const handleEdit = (account) => {
 
+        // First load the selected account into form
+        editAccount(account);
+
+
+        // Then switch to form tab
         setActiveTab("account");
+
 
         window.scrollTo({
             top: 0,
             behavior: "smooth",
         });
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Save Success
+    |--------------------------------------------------------------------------
+    */
+
+    const handleSaveSuccess = () => {
+
+        // After Add/Update, open Account List
+        setActiveTab("list");
 
     };
 
@@ -81,8 +108,6 @@ export default function Account() {
 
                     <div className="nav nav-pills nav-fill">
 
-                        {/* Account */}
-
                         <button
                             type="button"
                             className={`nav-link ${
@@ -107,8 +132,6 @@ export default function Account() {
 
                         </button>
 
-
-                        {/* Account List */}
 
                         <button
                             type="button"
@@ -146,7 +169,9 @@ export default function Account() {
 
                     <div className="col-12">
 
-                        <AccountForm />
+                        <AccountForm
+                            onSaveSuccess={handleSaveSuccess}
+                        />
 
                     </div>
 
@@ -176,13 +201,17 @@ export default function Account() {
                         </div>
 
 
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={() =>
-                                setActiveTab("account")
-                            }
-                        >
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => {
+
+                                    resetForm();
+
+                                    setActiveTab("account");
+
+                                }}
+                            >
 
                             <IconPlus
                                 size={18}

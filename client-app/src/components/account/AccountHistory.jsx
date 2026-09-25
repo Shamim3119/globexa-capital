@@ -3,19 +3,25 @@ import {
     IconEdit,
     IconHash,
     IconCurrencyDollar,
+    IconMapPin,
 } from "@tabler/icons-react";
 
 import { useAccount } from "../../context/AccountContext";
 
 
-export default function AccountHistory() {
+export default function AccountHistory({ onEdit }) {
 
     const {
         accounts,
         accountsLoading,
-        editAccount,
     } = useAccount();
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Loading
+    |--------------------------------------------------------------------------
+    */
 
     if (accountsLoading) {
 
@@ -44,6 +50,12 @@ export default function AccountHistory() {
 
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | No Accounts
+    |--------------------------------------------------------------------------
+    */
 
     if (!accounts.length) {
 
@@ -79,6 +91,12 @@ export default function AccountHistory() {
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Account List
+    |--------------------------------------------------------------------------
+    */
+
     return (
 
         <div className="row row-cards">
@@ -88,14 +106,21 @@ export default function AccountHistory() {
                 const isInactive =
                     Number(item.inactive) === 1;
 
+
                 const operatorName =
                     item.operator?.name || "-";
+
 
                 const bankType =
                     item.operator?.bank_type?.name || "-";
 
+
                 const currency =
                     item.operator?.currency?.name || "-";
+
+
+                const isBranchRequired =
+                    Number(item.operator?.type_id) === 7;
 
 
                 return (
@@ -199,6 +224,8 @@ export default function AccountHistory() {
 
                                 <div className="row g-3 mb-3">
 
+                                    {/* Bank Type */}
+
                                     <div className="col-6">
 
                                         <div className="text-secondary small">
@@ -220,6 +247,8 @@ export default function AccountHistory() {
 
                                     </div>
 
+
+                                    {/* Currency */}
 
                                     <div className="col-6">
 
@@ -245,13 +274,41 @@ export default function AccountHistory() {
                                 </div>
 
 
+                                {/* Branch */}
+
+                                {isBranchRequired && item.branch && (
+
+                                    <div className="bg-light rounded p-3 mb-3">
+
+                                        <div className="text-secondary small mb-1">
+
+                                            <IconMapPin
+                                                size={15}
+                                                className="me-1"
+                                            />
+
+                                            Branch
+
+                                        </div>
+
+                                        <div className="fw-bold">
+
+                                            {item.branch}
+
+                                        </div>
+
+                                    </div>
+
+                                )}
+
+
                                 {/* Edit */}
 
                                 <button
                                     type="button"
                                     className="btn btn-primary w-100"
                                     onClick={() =>
-                                        editAccount(item)
+                                        onEdit(item)
                                     }
                                 >
 

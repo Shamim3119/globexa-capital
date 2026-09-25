@@ -16,27 +16,140 @@ export function AccountProvider({ children }) {
 
     const { user } = useAuth();
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accounts
+    |--------------------------------------------------------------------------
+    */
+
     const [accounts, setAccounts] = useState([]);
 
-    const [operators, setOperators] = useState([]);
+    const [accountsLoading, setAccountsLoading] =
+        useState(false);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Banking Types
+    |--------------------------------------------------------------------------
+    */
+
+    const [bankingTypes, setBankingTypes] =
+        useState([]);
+
+    const [bankingTypeId, setBankingTypeId] =
+        useState("");
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Operators
+    |--------------------------------------------------------------------------
+    */
+
+    const [operators, setOperators] =
+        useState([]);
+
+    const [operatorId, setOperatorId] =
+        useState("");
+
+    const [operatorsLoading, setOperatorsLoading] =
+        useState(false);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Account Form
+    |--------------------------------------------------------------------------
+    */
 
     const [id, setId] = useState(null);
 
-    const [accountName, setAccountName] = useState("");
+    const [accountName, setAccountName] =
+        useState("");
 
-    const [accountNo, setAccountNo] = useState("");
+    const [accountNo, setAccountNo] =
+        useState("");
 
-    const [operatorId, setOperatorId] = useState("");
+    const [branch, setBranch] =
+        useState("");
 
-    const [inactive, setInactive] = useState(false);
+    const [inactive, setInactive] =
+        useState(false);
 
-    const [loading, setLoading] = useState(false);
 
-    const [accountsLoading, setAccountsLoading] = useState(false);
+    /*
+    |--------------------------------------------------------------------------
+    | General Loading / Error
+    |--------------------------------------------------------------------------
+    */
 
-    const [operatorsLoading, setOperatorsLoading] = useState(false);
+    const [loading, setLoading] =
+        useState(false);
 
-    const [error, setError] = useState(null);
+    const [error, setError] =
+        useState(null);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load Banking Types
+    |--------------------------------------------------------------------------
+    */
+
+    const loadBankingTypes = async () => {
+
+        try {
+
+            const response =
+                await api.get(
+                    "/parameters",
+                    {
+                        params: {
+                            tag: "banking-type",
+                        },
+                    }
+                );
+
+
+            const data =
+                response.data?.data || [];
+
+
+            setBankingTypes(data);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Select first banking type
+            |--------------------------------------------------------------------------
+            */
+
+            if (data.length > 0) {
+
+                setBankingTypeId(
+                    String(data[0].id)
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Banking Types Error:",
+                error.response?.data || error
+            );
+
+
+            setError(
+                error.response?.data?.message ||
+                "Failed to load banking types."
+            );
+
+        }
+
+    };
 
 
     /*
@@ -51,22 +164,19 @@ export function AccountProvider({ children }) {
 
             setOperatorsLoading(true);
 
-            const response = await api.get(
-                "/bank-operators"
-            );
 
-            const data = response.data?.data || [];
+            const response =
+                await api.get(
+                    "/bank-operators"
+                );
+
+
+            const data =
+                response.data?.data || [];
+
 
             setOperators(data);
 
-            // Same default behavior as React Native
-            if (data.length > 0 && !operatorId) {
-
-                setOperatorId(
-                    String(data[0].id)
-                );
-
-            }
 
         } catch (error) {
 
@@ -74,6 +184,7 @@ export function AccountProvider({ children }) {
                 "Bank Operators Error:",
                 error.response?.data || error
             );
+
 
             setError(
                 error.response?.data?.message ||
@@ -83,6 +194,102 @@ export function AccountProvider({ children }) {
         } finally {
 
             setOperatorsLoading(false);
+
+        }
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filter Operators By Banking Type
+    |--------------------------------------------------------------------------
+    */
+
+    const filteredOperators =
+        operators.filter(
+            (operator) =>
+                String(operator.type_id) ===
+                String(bankingTypeId)
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Selected Operator
+    |--------------------------------------------------------------------------
+    */
+
+    const selectedOperator =
+        operators.find(
+            (operator) =>
+                String(operator.id) ===
+                String(operatorId)
+        ) || null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Banking Type Change
+    |--------------------------------------------------------------------------
+    */
+
+    const handleBankingTypeChange = (value) => {
+
+        setBankingTypeId(
+            String(value)
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear previous operator
+        |--------------------------------------------------------------------------
+        */
+
+        setOperatorId("");
+
+        setBranch("");
+
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Operator Change
+    |--------------------------------------------------------------------------
+    */
+
+    const handleOperatorChange = (value) => {
+
+        const newOperatorId =
+            String(value);
+
+
+        setOperatorId(
+            newOperatorId
+        );
+
+
+        const operator =
+            operators.find(
+                (item) =>
+                    String(item.id) ===
+                    newOperatorId
+            );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear branch when type is not 7
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            Number(operator?.type_id) !== 7
+        ) {
+
+            setBranch("");
 
         }
 
@@ -101,22 +308,27 @@ export function AccountProvider({ children }) {
             return;
         }
 
+
         try {
 
             setAccountsLoading(true);
 
-            const response = await api.get(
-                "/client-accounts",
-                {
-                    params: {
-                        client_id: user.id,
-                    },
-                }
-            );
+
+            const response =
+                await api.get(
+                    "/client-accounts",
+                    {
+                        params: {
+                            client_id: user.id,
+                        },
+                    }
+                );
+
 
             setAccounts(
                 response.data?.data || []
             );
+
 
         } catch (error) {
 
@@ -125,10 +337,12 @@ export function AccountProvider({ children }) {
                 error.response?.data || error
             );
 
+
             setError(
                 error.response?.data?.message ||
                 "Failed to load accounts."
             );
+
 
         } finally {
 
@@ -153,11 +367,31 @@ export function AccountProvider({ children }) {
 
         setAccountNo("");
 
-        setOperatorId(
-            operators.length > 0
-                ? String(operators[0].id)
-                : ""
-        );
+        setBranch("");
+
+        /*
+        | Reset to first banking type
+        */
+
+        if (bankingTypes.length > 0) {
+
+            setBankingTypeId(
+                String(bankingTypes[0].id)
+            );
+
+        } else {
+
+            setBankingTypeId("");
+
+        }
+
+
+        /*
+        | Clear operator first
+        */
+
+        setOperatorId("");
+
 
         setInactive(false);
 
@@ -186,7 +420,8 @@ export function AccountProvider({ children }) {
 
             return {
                 success: false,
-                message: "Account name is required.",
+                message:
+                    "Account name is required.",
             };
 
         }
@@ -196,7 +431,19 @@ export function AccountProvider({ children }) {
 
             return {
                 success: false,
-                message: "Account number is required.",
+                message:
+                    "Account number is required.",
+            };
+
+        }
+
+
+        if (!bankingTypeId) {
+
+            return {
+                success: false,
+                message:
+                    "Banking type is required.",
             };
 
         }
@@ -206,7 +453,28 @@ export function AccountProvider({ children }) {
 
             return {
                 success: false,
-                message: "Payment operator is required.",
+                message:
+                    "Payment operator is required.",
+            };
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Branch Validation
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            Number(selectedOperator?.type_id) === 7 &&
+            !branch.trim()
+        ) {
+
+            return {
+                success: false,
+                message:
+                    "Branch is required for this payment operator.",
             };
 
         }
@@ -223,22 +491,52 @@ export function AccountProvider({ children }) {
                 "/client-accounts",
                 {
                     id: id,
-                    client_id: user.id,
-                    account_name: accountName.trim(),
-                    account_no: accountNo.trim(),
-                    operator_id: Number(operatorId),
-                    inactive: inactive ? 1 : 0,
+
+                    client_id:
+                        user.id,
+
+                    account_name:
+                        accountName.trim(),
+
+                    account_no:
+                        accountNo.trim(),
+
+                    operator_id:
+                        Number(operatorId),
+
+                    branch:
+                        Number(
+                            selectedOperator?.type_id
+                        ) === 7
+                            ? branch.trim()
+                            : null,
+
+                    inactive:
+                        inactive ? 1 : 0,
                 }
             );
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Reload List
+            |--------------------------------------------------------------------------
+            */
+
             await loadAccounts();
 
 
-            const message = id
-                ? "Account updated successfully."
-                : "Account created successfully.";
+            const message =
+                id
+                    ? "Account updated successfully."
+                    : "Account created successfully.";
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reset Form
+            |--------------------------------------------------------------------------
+            */
 
             resetForm();
 
@@ -270,6 +568,7 @@ export function AccountProvider({ children }) {
                 message,
             };
 
+
         } finally {
 
             setLoading(false);
@@ -289,37 +588,49 @@ export function AccountProvider({ children }) {
 
         setId(account.id);
 
+
         setAccountName(
             account.account_name || ""
         );
+
 
         setAccountNo(
             account.account_no || ""
         );
 
+
+        setBranch(
+            account.branch || ""
+        );
+
+
         setOperatorId(
             String(account.operator_id || "")
         );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Set Banking Type From Operator
+        |--------------------------------------------------------------------------
+        */
+
+        if (account.operator?.type_id) {
+
+            setBankingTypeId(
+                String(
+                    account.operator.type_id
+                )
+            );
+
+        }
+
 
         setInactive(
             Number(account.inactive) === 1
         );
 
     };
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Selected Operator
-    |--------------------------------------------------------------------------
-    */
-
-    const selectedOperator =
-        operators.find(
-            (operator) =>
-                String(operator.id) ===
-                String(operatorId)
-        ) || null;
 
 
     /*
@@ -334,6 +645,9 @@ export function AccountProvider({ children }) {
             return;
         }
 
+
+        loadBankingTypes();
+
         loadOperators();
 
         loadAccounts();
@@ -341,43 +655,107 @@ export function AccountProvider({ children }) {
     }, [user?.id]);
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Context Provider
+    |--------------------------------------------------------------------------
+    */
+
     return (
 
         <AccountContext.Provider
             value={{
 
+                /*
+                | Accounts
+                */
+
                 accounts,
+
+                accountsLoading,
+
+                loadAccounts,
+
+
+                /*
+                | Banking Types
+                */
+
+                bankingTypes,
+
+                bankingTypeId,
+
+                setBankingTypeId,
+
+                filteredOperators,
+
+                handleBankingTypeChange,
+
+
+                /*
+                | Operators
+                */
+
                 operators,
-
-                id,
-                setId,
-
-                accountName,
-                setAccountName,
-
-                accountNo,
-                setAccountNo,
-
-                operatorId,
-                setOperatorId,
-
-                inactive,
-                setInactive,
 
                 selectedOperator,
 
-                loading,
-                accountsLoading,
+                operatorId,
+
+                setOperatorId,
+
+                handleOperatorChange,
+
                 operatorsLoading,
+
+
+                /*
+                | Form
+                */
+
+                id,
+
+                setId,
+
+                accountName,
+
+                setAccountName,
+
+                accountNo,
+
+                setAccountNo,
+
+                branch,
+
+                setBranch,
+
+                inactive,
+
+                setInactive,
+
+
+                /*
+                | State
+                */
+
+                loading,
 
                 error,
 
+
+                /*
+                | Actions
+                */
+
                 saveAccount,
+
                 editAccount,
+
                 resetForm,
 
-                loadAccounts,
                 loadOperators,
+
+                loadBankingTypes,
 
             }}
         >
@@ -391,9 +769,17 @@ export function AccountProvider({ children }) {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| Hook
+|--------------------------------------------------------------------------
+*/
+
 export function useAccount() {
 
-    const context = useContext(AccountContext);
+    const context =
+        useContext(AccountContext);
+
 
     if (!context) {
 
@@ -402,6 +788,7 @@ export function useAccount() {
         );
 
     }
+
 
     return context;
 

@@ -20,11 +20,15 @@
                             @error('deposit_rate') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
-                            <label>Witdraw Conversion Rate 1 $ = BDT Amount </label>
+                            <label>Witdraw Conversion Rate 1 $ = BDT Amount Mobile Banking </label>
                             <input type="text" class="form-control" wire:model="withdraw_rate">
                             @error('withdraw_rate') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
- 
+                        <div class="mb-3">
+                            <label>Witdraw Conversion Rate 1 $ = BDT Amount General Banking  </label>
+                            <input type="text" class="form-control" wire:model="withdraw_rate_banking">
+                            @error('withdraw_rate_banking') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
                     </div>
                     <div class="card-footer">
                         <div class="m-3 d-flex justify-content-center">

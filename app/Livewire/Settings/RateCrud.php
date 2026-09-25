@@ -11,7 +11,7 @@ class RateCrud extends Component
     public $activeTab = 'rate';
 
     public $global_settings;
-    public $deposit_rate, $withdraw_rate; 
+    public $deposit_rate, $withdraw_rate, $withdraw_rate_banking; 
 
     public function mount()
     {
@@ -19,6 +19,7 @@ class RateCrud extends Component
  
         $this->deposit_rate = $this->global_settings->deposit_rate;
         $this->withdraw_rate = $this->global_settings->withdraw_rate;
+        $this->withdraw_rate_banking = $this->global_settings->withdraw_rate_banking;
     }
 
     public function save()
@@ -26,12 +27,14 @@ class RateCrud extends Component
         $this->validate([
             'deposit_rate' => 'required|numeric',
             'withdraw_rate' => 'required|numeric',
+            'withdraw_rate_banking' => 'required|numeric',
         ]);
 
         $this->global_settings->update([
  
             'deposit_rate' => $this->deposit_rate,
             'withdraw_rate' => $this->withdraw_rate,  
+            'withdraw_rate_banking' => $this->withdraw_rate_banking,
         ]);
 
         $this->global_settings = $this->global_settings->fresh();

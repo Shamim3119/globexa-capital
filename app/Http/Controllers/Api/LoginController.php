@@ -12,7 +12,7 @@ use App\Models\GlobalSettings;
 use App\Models\ClientDevice;
 use App\Models\LoginOtp;
 use Illuminate\Support\Facades\Mail;
-
+use App\Mail\DeviceVerificationOtpMail;
 
 class LoginController extends Controller
 {
@@ -246,20 +246,10 @@ class LoginController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        Mail::raw(
-            "Your Globexa Capital login verification code is: {$otp}\n\n"
-            . "This code will expire in 10 minutes.\n\n"
-            . "If you did not attempt to log in, please contact support.",
-            function ($message) use ($client) {
+ 
 
-                $message
-                    ->to($client->email)
-                    ->subject(
-                        'Globexa Capital Login Verification'
-                    );
-
-            }
-        );
+        Mail::to($client->email)
+            ->send(new DeviceVerificationOtpMail($otp));
 
 
         return response()->json([
@@ -462,6 +452,11 @@ class LoginController extends Controller
         $withdraw_rate =
             $global_settings->withdraw_rate;
 
+        $withdraw_rate_banking =
+            $global_settings->withdraw_rate_banking;
+
+            
+
 
         $token =
             $client
@@ -520,6 +515,10 @@ class LoginController extends Controller
 
                 'withdraw_rate' =>
                     $withdraw_rate,
+
+                'withdraw_rate_banking' =>
+                    $withdraw_rate_banking,
+
 
                 'left_balance' =>
                     $leftBalance['balance'],

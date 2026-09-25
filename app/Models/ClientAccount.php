@@ -12,6 +12,7 @@ class ClientAccount extends Model
         'account_no',
         'operator_id',
         'balance',
+        'branch',
         'inactive'
     ];
 

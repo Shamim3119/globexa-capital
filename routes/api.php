@@ -22,6 +22,9 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserProfile;
 use App\Http\Controllers\Api\ClientNetworkController;
 use App\Http\Controllers\Api\VerificationController;
+use App\Http\Controllers\Api\ParameterController;
+
+
 
 
 /*
@@ -354,6 +357,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get(
         '/incomes',
         [IncomeController::class, 'index']
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Income
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/parameters',
+        [ParameterController::class, 'index']
     );
 
 });

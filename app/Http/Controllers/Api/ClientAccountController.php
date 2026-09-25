@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ClientAccount;
-use Illuminate\Validation\Rule;
+use App\Models\BankOperator;
+use Exception;
 
 class ClientAccountController extends Controller
 {
@@ -33,10 +34,9 @@ class ClientAccountController extends Controller
             ->orderByDesc('id')
             ->get();
 
-
         return response()->json([
             'status' => true,
-            'data' => $accounts
+            'data'   => $accounts
         ]);
     }
 
@@ -46,55 +46,87 @@ class ClientAccountController extends Controller
      */
     public function save(Request $request)
     {
-        $request->validate([
-            'client_id'    => 'required|exists:clients,id',
-            'account_name' => 'required|string|max:255',
-            'account_no'   => 'required|string|max:255',
-            'operator_id'  => 'required|integer',
-            'balance'      => 'nullable|numeric',
-            'inactive'     => 'nullable|boolean',
-        ]);
+        try {
+            // Note: Replace 'users,id' with 'clients,id' if your table name is actually 'clients'
+            $request->validate([
+                'client_id'    => 'required|integer', 
+                'account_name' => 'required|string|max:255',
+                'account_no'   => 'required|string|max:255',
+                'operator_id'  => 'required|integer|exists:bank_operators,id',
+                'balance'      => 'nullable|numeric',
+                'inactive'     => 'nullable|boolean',
+            ]);
 
-        if ($request->filled('id')) {
+            $operator = BankOperator::findOrFail($request->operator_id);
 
-            $account = ClientAccount::find($request->id);
+            $isBranchRequired = (int) $operator->type_id === 7;
 
-            if (!$account) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Account not found.'
-                ], 404);
+            if ($isBranchRequired) {
+                $request->validate([
+                    'branch' => 'required|string|max:255',
+                ]);
             }
 
-            $account->update([
+            $branch = $isBranchRequired ? trim($request->branch) : null;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Record (If ID is provided and not empty)
+            |--------------------------------------------------------------------------
+            */
+            if ($request->filled('id')) {
+                $account = ClientAccount::find($request->id);
+
+                if (!$account) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Account not found.',
+                    ], 404);
+                }
+
+                $account->update([
+                    'client_id'    => $request->client_id,
+                    'account_name' => $request->account_name,
+                    'account_no'   => $request->account_no,
+                    'operator_id'  => $request->operator_id,
+                    'balance'      => $request->balance ?? 0,
+                    'branch'       => $branch,
+                    'inactive'     => $request->inactive ?? 0,
+                ]);
+
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Account updated successfully.',
+                    'data'    => $account->fresh(),
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Insert New Record
+            |--------------------------------------------------------------------------
+            */
+            $account = ClientAccount::create([
                 'client_id'    => $request->client_id,
                 'account_name' => $request->account_name,
                 'account_no'   => $request->account_no,
                 'operator_id'  => $request->operator_id,
                 'balance'      => $request->balance ?? 0,
+                'branch'       => $branch,
                 'inactive'     => $request->inactive ?? 0,
             ]);
 
             return response()->json([
-                'status' => true,
-                'message' => 'Account updated successfully.',
-                'data' => $account
-            ]);
+                'status'  => true,
+                'message' => 'Account created successfully.',
+                'data'    => $account,
+            ], 201);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        $account = ClientAccount::create([
-            'client_id'    => $request->client_id,
-            'account_name' => $request->account_name,
-            'account_no'   => $request->account_no,
-            'operator_id'  => $request->operator_id,
-            'balance'      => $request->balance ?? 0,
-            'inactive'     => $request->inactive ?? 0,
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Account created successfully.',
-            'data' => $account
-        ], 201);
     }
 }

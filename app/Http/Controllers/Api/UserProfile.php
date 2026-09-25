@@ -51,6 +51,7 @@ class UserProfile extends Controller
  
         $deposit_rate = $global_settings->deposit_rate;
         $withdraw_rate = $global_settings->withdraw_rate;
+        $withdraw_rate_banking = $global_settings->withdraw_rate_banking;
 
 
         return response()->json([
@@ -74,6 +75,8 @@ class UserProfile extends Controller
 
                 'deposit_rate' => $deposit_rate,
                 'withdraw_rate' => $withdraw_rate,
+                'withdraw_rate_banking' => $withdraw_rate_banking,
+                
             ]
         ]);
     }

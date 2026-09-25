@@ -108,33 +108,67 @@ export const WithdrawProvider = ({ children }) => {
     */
 
     const handleAccountChange = (value) => {
+
         setForm((prev) => ({
             ...prev,
             accountId: value,
         }));
 
+
         const account = accounts.find(
             (item) => item.id === Number(value)
         );
 
+
         if (!account) {
+
             setSelectedCurrency("");
+
             setSelectedRate(0);
+
             return;
         }
+
 
         const currency =
             account.operator?.currency?.name?.toUpperCase() || "";
 
+
+        const operatorTypeId =
+            Number(account.operator?.type_id ?? 0);
+
+
         setSelectedCurrency(currency);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Select Withdrawal Rate
+        |--------------------------------------------------------------------------
+        */
+
         if (currency === "USD") {
+
             setSelectedRate(1);
-        } else {
+
+        } else if (operatorTypeId === 7) {
+
             setSelectedRate(
-                Number(user?.withdraw_rate ?? 0)
+                Number(
+                    user?.withdraw_rate_banking ?? 0
+                )
             );
+
+        } else {
+
+            setSelectedRate(
+                Number(
+                    user?.withdraw_rate ?? 0
+                )
+            );
+
         }
+
     };
 
     /*
