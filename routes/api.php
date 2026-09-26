@@ -25,8 +25,6 @@ use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\ParameterController;
 
 
-
-
 /*
 |--------------------------------------------------------------------------
 | PUBLIC ROUTES

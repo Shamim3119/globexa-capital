@@ -12,11 +12,12 @@ export default function AuthLayout({ children }) {
 
                     <img
                         src={logo}
-                        alt="Globexa Capital"
+                        alt="Globexa Capital Ltd."
                         className="brand-logo"
+                          style={{ width: "200px", height: "auto" }}
                     />
 
-                    <h1>Globexa Capital</h1>
+                    <h1>Globexa Capital Ltd.</h1>
 
                     <p>
                         Secure Investment Platform

@@ -65,7 +65,7 @@ export default function Header(){
 
                 <div className="navbar-brand">
 
-                    Globexa Capital
+                    Globexa Capital Ltd.
 
                 </div>
 

@@ -13,6 +13,9 @@ class GlobalSettingsCrud extends Component
     public $min_deposit, $min_activation, $min_withdrawal, $max_deposit, $max_activation, $max_withdrawal; 
     public $min_p2p, $max_p2p, $min_transfer, $max_transfer;
     public $min_withdrawal_bdt, $max_withdrawal_bdt;
+    public $min_withdrawal_bank_bdt, $max_withdrawal_bank_bdt;
+ 
+
 
     public function mount()
     {
@@ -36,8 +39,11 @@ class GlobalSettingsCrud extends Component
         $this->max_transfer = $this->global_settings->max_transfer;
         $this->min_withdrawal_bdt = $this->global_settings->min_withdrawal_bdt;
         $this->max_withdrawal_bdt = $this->global_settings->max_withdrawal_bdt;
- 
 
+        $this->min_withdrawal_bank_bdt = $this->global_settings->min_withdrawal_bank_bdt;
+        $this->max_withdrawal_bank_bdt = $this->global_settings->max_withdrawal_bank_bdt;
+
+ 
         
         $this->ivr_com = $this->global_settings->ivr_com;
 
@@ -73,7 +79,10 @@ class GlobalSettingsCrud extends Component
             'max_transfer' => 'required|numeric',
             'min_withdrawal_bdt' => 'required|numeric',
             'max_withdrawal_bdt' => 'required|numeric',
+            'min_withdrawal_bank_bdt' => 'required|numeric',
+            'max_withdrawal_bank_bdt' => 'required|numeric',
         ]);
+
 
 
 
@@ -92,6 +101,11 @@ class GlobalSettingsCrud extends Component
             'inv_charge_level' => $this->inv_charge_level,
             'min_withdrawal_bdt' => $this->min_withdrawal_bdt,
             'max_withdrawal_bdt' => $this->max_withdrawal_bdt,
+
+            'min_withdrawal_bank_bdt' => $this->min_withdrawal_bank_bdt,
+            'max_withdrawal_bank_bdt' => $this->max_withdrawal_bank_bdt,
+
+
             
             'ivr_com' => $this->ivr_com,
 

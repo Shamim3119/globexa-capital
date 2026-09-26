@@ -236,7 +236,7 @@ export default function Sidebar() {
                             :
 
                             <span className="navbar-brand-text">
-                                Globexa Capital
+                                Globexa Capital Ltd.
                             </span>
                     }
 

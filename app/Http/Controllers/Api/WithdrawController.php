@@ -128,9 +128,7 @@ class WithdrawController extends Controller
             ], 404);
         }
 
-        $currency = strtoupper(
-            $account->operator->currency->name ?? ''
-        );
+        $currency = strtoupper($account->operator->currency->name ?? '');
 
         // =====================================================
         // Withdrawal Limit
@@ -143,8 +141,25 @@ class WithdrawController extends Controller
 
         } elseif ($currency === 'BDT') {
 
-            $minWithdrawal = $settings->min_withdrawal_bdt;
-            $maxWithdrawal = $settings->max_withdrawal_bdt;
+            // type_id = 3
+            if ($operatorTypeId === 3) {
+                $minWithdrawal = $settings->min_withdrawal_bdt;
+                $maxWithdrawal = $settings->max_withdrawal_bdt;
+            }
+            // General Banking
+            // type_id = 7
+            elseif ($operatorTypeId === 7) {
+                $minWithdrawal = $settings->min_withdrawal_bank_bdt;
+                $maxWithdrawal = $settings->max_withdrawal_bank_bdt;
+            }
+            // Unknown BDT operator type
+            else {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unsupported BDT payment operator type.'
+                ], 422);
+            }
 
         } else {
 
@@ -234,6 +249,13 @@ class WithdrawController extends Controller
             // =====================================================
             // Conversion
             // =====================================================
+
+
+
+            $operatorTypeId = (int) (
+                $account->operator->type_id ?? 0
+            );
+
 
             if ($currency === 'USD') {
 

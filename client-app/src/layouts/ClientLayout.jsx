@@ -10,7 +10,7 @@ return (
 <div className="container-xl">
 
 <h2 className="navbar-brand">
-Globexa Capital
+Globexa Capital Ltd.
 </h2>
 
 </div>

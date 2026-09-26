@@ -27,6 +27,8 @@ class GlobalSettings extends Model
                             'max_transfer',
                             'min_withdrawal_bdt',
                             'max_withdrawal_bdt',
+                            'min_withdrawal_bank_bdt',
+                            'max_withdrawal_bank_bdt',
                             'withdraw_rate_banking'
                         ];
  

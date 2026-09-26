@@ -9,17 +9,14 @@ use App\Models\Deposit;
 use App\Models\Investment;
 use App\Models\Withdraw;
 
-
 use App\Models\IncomeDaily;
 use App\Models\IncomeGeneration;
 use App\Models\IncomeIB;
 use App\Models\IncomeReference;
 use App\Models\IncomeSalary;
 
-
 class DashboardController extends Controller
 {
-
     public function incomeBreakdown(Request $request)
     {
         $userId = $request->user_id;
@@ -56,7 +53,6 @@ class DashboardController extends Controller
         ]);
     }
 
-
     public function dashboardSummary(Request $request)
     {
         $userId = $request->user_id;
@@ -74,6 +70,19 @@ class DashboardController extends Controller
         // Previous 7 days (excluding today)
         $lastWeekStart = now()->subDays(7)->startOfDay();
         $lastWeekEnd = now()->subDay()->endOfDay();
+
+        // All-Time Totals
+        $totalDeposit = Deposit::where('deposit_by', $userId)->where('status_id', 2)->sum('amount');
+
+        $totalInvestment = Investment::where('client_id', $userId)->sum('amount');
+
+        $totalWithdraw = Withdraw::where('withdraw_by', $userId)->where('status_id', 2)->sum('amount');
+
+        $totalIncome = IncomeDaily::where('client_id', $userId)->sum('amount')
+            + IncomeGeneration::where('client_id', $userId)->sum('amount')
+            + IncomeIB::where('client_id', $userId)->sum('amount')
+            + IncomeReference::where('client_id', $userId)->sum('amount')
+            + IncomeSalary::where('client_id', $userId)->sum('amount');
 
         return response()->json([
 
@@ -130,6 +139,14 @@ class DashboardController extends Controller
                 "lastWeek" => Withdraw::where('withdraw_by', $userId)
                     ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
                     ->sum('amount'),
+            ],
+
+            // Overall Grand Totals
+            "totals" => [
+                "deposit" => (string) $totalDeposit,
+                "income" => (string) $totalIncome,
+                "investment" => (string) $totalInvestment,
+                "withdraw" => (string) $totalWithdraw,
             ],
 
         ]);

@@ -62,9 +62,15 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label>Minimum Withdrawal BDT Account</label>
+                            <label>Minimum Withdrawal BDT Mobile Banking</label>
                             <input type="text" class="form-control" wire:model="min_withdrawal_bdt">
                             @error('min_withdrawal_bdt') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Minimum Withdrawal BDT Generel Banking</label>
+                            <input type="text" class="form-control" wire:model="min_withdrawal_bank_bdt">
+                            @error('min_withdrawal_bank_bdt') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="mb-3">
@@ -95,10 +101,18 @@
                             @error('max_withdrawal') <span class="text-danger">{{ $message }}</span> @enderror  
                         </div>
                         <div class="mb-3">
-                            <label>Maximum Withdrawal BDT Account</label>
+                            <label>Maximum Withdrawal BDT Mobile Banking</label>
                             <input type="text" class="form-control" wire:model="max_withdrawal_bdt">
                             @error('max_withdrawal_bdt') <span class="text-danger">{{ $message }}</span> @enderror  
                         </div>
+
+
+                        <div class="mb-3">
+                            <label>Maximum Withdrawal BDT Generel Banking</label>
+                            <input type="text" class="form-control" wire:model="max_withdrawal_bank_bdt">
+                            @error('max_withdrawal_bank_bdt') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="mb-3">
                             <label>Maximum P2P</label>
                             <input type="text" class="form-control" wire:model="max_p2p">
